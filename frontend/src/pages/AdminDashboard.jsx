@@ -82,17 +82,45 @@ export default function AdminDashboard() {
     reader.onloadend = async () => {
       const base64Data = reader.result
       try {
+        // 1. Try Backend Upload Endpoint if available
         const res = await fetch('http://localhost:5000/api/upload', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ image: base64Data }),
-        })
-        const data = await res.json()
-        if (data.url) {
-          setTopperForm((prev) => ({ ...prev, image: data.url }))
+        }).catch(() => null)
+
+        if (res && res.ok) {
+          const data = await res.json()
+          if (data.url) {
+            setTopperForm((prev) => ({ ...prev, image: data.url }))
+            setIsUploadingImage(false)
+            return
+          }
         }
+
+        // 2. Direct Cloudinary Unsigned Upload Fallback for Live Static Sites
+        const formData = new FormData()
+        formData.append('file', base64Data)
+        formData.append('upload_preset', 'school_website_preset')
+
+        const cloudRes = await fetch('https://api.cloudinary.com/v1_1/dbp97xecb/image/upload', {
+          method: 'POST',
+          body: formData,
+        }).catch(() => null)
+
+        if (cloudRes && cloudRes.ok) {
+          const cloudData = await cloudRes.json()
+          if (cloudData.secure_url) {
+            setTopperForm((prev) => ({ ...prev, image: cloudData.secure_url }))
+            setIsUploadingImage(false)
+            return
+          }
+        }
+
+        // 3. Final Fallback to base64 preview
+        setTopperForm((prev) => ({ ...prev, image: base64Data }))
       } catch (err) {
-        console.error('Upload failed, falling back to base64 preview:', err)
+        console.error('Upload error:', err)
         setTopperForm((prev) => ({ ...prev, image: base64Data }))
       } finally {
         setIsUploadingImage(false)
@@ -232,13 +260,38 @@ export default function AdminDashboard() {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ image: base64Data }),
-        })
-        const data = await res.json()
-        if (data.url) {
-          setGalleryForm((prev) => ({ ...prev, image: data.url }))
+        }).catch(() => null)
+
+        if (res && res.ok) {
+          const data = await res.json()
+          if (data.url) {
+            setGalleryForm((prev) => ({ ...prev, image: data.url }))
+            setIsUploadingGalleryImg(false)
+            return
+          }
         }
+
+        const formData = new FormData()
+        formData.append('file', base64Data)
+        formData.append('upload_preset', 'school_website_preset')
+
+        const cloudRes = await fetch('https://api.cloudinary.com/v1_1/dbp97xecb/image/upload', {
+          method: 'POST',
+          body: formData,
+        }).catch(() => null)
+
+        if (cloudRes && cloudRes.ok) {
+          const cloudData = await cloudRes.json()
+          if (cloudData.secure_url) {
+            setGalleryForm((prev) => ({ ...prev, image: cloudData.secure_url }))
+            setIsUploadingGalleryImg(false)
+            return
+          }
+        }
+
+        setGalleryForm((prev) => ({ ...prev, image: base64Data }))
       } catch (err) {
-        console.error('Gallery upload failed, fallback to base64:', err)
+        console.error('Gallery upload error:', err)
         setGalleryForm((prev) => ({ ...prev, image: base64Data }))
       } finally {
         setIsUploadingGalleryImg(false)
