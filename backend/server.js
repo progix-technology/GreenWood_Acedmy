@@ -311,6 +311,62 @@ app.post('/api/admissions/send-email', express.json(), async (req, res) => {
     }
 });
 
+// ==========================================
+// MONGODB SCHEMAS & CRUD ENDPOINTS FOR DYNAMIC DATA Persistence
+// ==========================================
+
+const topperSchema = new mongoose.Schema({
+    id: String,
+    name: String,
+    class: String,
+    stream: String,
+    percentage: String,
+    rank: String,
+    rankBadge: String,
+    year: String,
+    image: String,
+    quote: String,
+    achievements: [String],
+    favoriteSubject: String
+}, { timestamps: true });
+
+const Topper = mongoose.models.Topper || mongoose.model('Topper', topperSchema);
+
+// GET /api/toppers
+app.get('/api/toppers', async (req, res) => {
+    try {
+        if (mongoose.connection.readyState === 1) {
+            const list = await Topper.find().sort({ createdAt: -1 });
+            if (list.length > 0) return res.json(list);
+        }
+        res.json([]);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// POST /api/toppers (Sync or Save Toppers)
+app.post('/api/toppers', async (req, res) => {
+    try {
+        const toppers = req.body; // Array or Single object
+        if (mongoose.connection.readyState === 1) {
+            if (Array.isArray(toppers)) {
+                await Topper.deleteMany({});
+                const saved = await Topper.insertMany(toppers);
+                console.log(`✅ ${saved.length} Board Toppers synced to MongoDB Database`);
+                return res.json({ success: true, toppers: saved });
+            } else {
+                const newTopper = await Topper.create(toppers);
+                return res.json({ success: true, topper: newTopper });
+            }
+        }
+        res.json({ success: true, message: 'Saved in memory' });
+    } catch (err) {
+        console.error('Error saving toppers:', err.message);
+        res.status(500).json({ error: err.message });
+    }
+});
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Backend server running with MongoDB Mongoose & Cloudinary Uploader on http://localhost:${PORT}`));
 

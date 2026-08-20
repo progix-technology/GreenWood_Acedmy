@@ -1441,13 +1441,24 @@ export default function AdminDashboard() {
                   </p>
                 </div>
 
-                <button
-                  onClick={openAddSubjectModal}
-                  className="inline-flex items-center gap-2 bg-[#0B1736] hover:bg-[#1C3564] text-white px-4 py-2.5 rounded-lg font-bold text-xs shadow-xs transition-colors shrink-0"
-                >
-                  <Plus size={16} />
-                  <span>Add New Board Topper</span>
-                </button>
+                <div className="flex items-center gap-2 shrink-0">
+                  <button
+                    onClick={() => {
+                      navigator.clipboard.writeText(JSON.stringify(toppersList, null, 2))
+                      alert('📋 Live Toppers Data copied to clipboard! You can paste this into data/toppers.js for permanent live site rendering.')
+                    }}
+                    className="inline-flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 py-2.5 rounded-lg font-bold text-xs shadow-xs transition-colors"
+                  >
+                    <span>📋 Copy Live Data (For Git)</span>
+                  </button>
+                  <button
+                    onClick={openAddSubjectModal}
+                    className="inline-flex items-center gap-2 bg-[#0B1736] hover:bg-[#1C3564] text-white px-4 py-2.5 rounded-lg font-bold text-xs shadow-xs transition-colors shrink-0"
+                  >
+                    <Plus size={16} />
+                    <span>Add New Board Topper</span>
+                  </button>
+                </div>
               </div>
 
               {/* Toppers Records Table */}
