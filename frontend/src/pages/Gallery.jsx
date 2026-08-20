@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { X, ZoomIn, ArrowRight } from 'lucide-react'
-import galleryData from '../data/gallery'
+import { getGalleryPhotos } from '../data/gallery'
+import { getOptimizedImageUrl } from '../utils/cloudinaryHelper'
 import useDocumentMeta from '../utils/useDocumentMeta'
 import SectionReveal from '../components/common/SectionReveal'
 import creativeToolsSvg from '../assets/bg-images/SchoolArtWork.png'
 
 export default function Gallery() {
+  const [galleryPhotos, setGalleryPhotos] = useState(getGalleryPhotos)
   const [selectedCategory, setSelectedCategory] = useState('All')
   const [activeItem, setActiveItem] = useState(null)
 
@@ -17,11 +19,17 @@ export default function Gallery() {
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' })
+
+    const handleUpdate = () => {
+      setGalleryPhotos(getGalleryPhotos())
+    }
+    window.addEventListener('galleryUpdated', handleUpdate)
+    return () => window.removeEventListener('galleryUpdated', handleUpdate)
   }, [])
 
-  const categories = ['All', ...Array.from(new Set(galleryData.map((g) => g.category)))]
+  const categories = ['All', ...Array.from(new Set(galleryPhotos.map((g) => g.category)))]
 
-  const filteredGallery = galleryData.filter(
+  const filteredGallery = galleryPhotos.filter(
     (g) => selectedCategory === 'All' || g.category === selectedCategory
   )
 
@@ -79,8 +87,10 @@ export default function Gallery() {
                   className="group relative overflow-hidden bg-gray-100 border border-gray-200 shadow-sm cursor-pointer h-[260px] md:h-[300px] rounded-none"
                 >
                   <img
-                    src={item.image}
+                    src={getOptimizedImageUrl(item.image, { width: 600 })}
                     alt={item.title}
+                    loading="lazy"
+                    decoding="async"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
 

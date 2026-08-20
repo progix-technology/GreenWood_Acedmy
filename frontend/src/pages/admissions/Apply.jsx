@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { CheckCircle2, User, Phone, BookOpen, FileCheck, ArrowRight, ArrowLeft, Upload, ShieldCheck } from 'lucide-react'
+import { addAdmissionApplication } from '../../data/admissions'
 import useDocumentMeta from '../../utils/useDocumentMeta'
 import SectionReveal from '../../components/common/SectionReveal'
 import creativeToolsSvg from '../../assets/bg-images/SchoolArtWork.png'
+import schoolLogo from '../../assets/images/school_website_logo.png'
 
 export default function Apply() {
   useDocumentMeta({
@@ -97,6 +99,15 @@ export default function Apply() {
     await new Promise((resolve) => setTimeout(resolve, 1000))
 
     const id = 'GW-2026-' + Math.floor(10000 + Math.random() * 90000)
+    addAdmissionApplication({
+      studentName: data.name,
+      seekingClass: data.grade,
+      stream: data.stream || 'General',
+      parentName: data.parentName,
+      parentPhone: data.phone,
+      address: data.address,
+      source: 'Online Website',
+    })
     localStorage.setItem('greenwood_application_submitted', JSON.stringify({ ...data, id, date: new Date().toLocaleDateString() }))
     setApplicationId(id)
     setSubmitting(false)
@@ -178,52 +189,193 @@ export default function Apply() {
           {/* Form Box */}
           <div className="bg-white p-6 md:p-10 border border-gray-200 shadow-md rounded-none">
             {step === 5 && applicationId ? (
-              /* Success Confirmation Screen */
-              <div className="text-center py-8 space-y-6">
-                <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
-                  <CheckCircle2 size={36} />
+              /* Success Confirmation Screen & Printable 1-Page Summary */
+              <div className="space-y-6">
+                {/* Embedded Print CSS to force 1 Single Page A4 Print matching screenshot 1:1 */}
+                <style>{`
+                  @media print {
+                    * {
+                      -webkit-print-color-adjust: exact !important;
+                      print-color-adjust: exact !important;
+                      color-adjust: exact !important;
+                    }
+                    html, body {
+                      height: 100% !important;
+                      margin: 0 !important;
+                      padding: 0 !important;
+                      background: white !important;
+                      overflow: hidden !important;
+                    }
+                    body * {
+                      visibility: hidden !important;
+                    }
+                    .no-print {
+                      display: none !important;
+                    }
+                    #printable-slip, #printable-slip * {
+                      visibility: visible !important;
+                    }
+                    #printable-slip {
+                      position: absolute !important;
+                      left: 50% !important;
+                      top: 5mm !important;
+                      transform: translateX(-50%) !important;
+                      width: 190mm !important;
+                      max-width: 190mm !important;
+                      margin: 0 auto !important;
+                      padding: 20px 24px !important;
+                      background: white !important;
+                      box-sizing: border-box !important;
+                      border: 2px solid #0B1736 !important;
+                      page-break-before: avoid !important;
+                      page-break-after: avoid !important;
+                      page-break-inside: avoid !important;
+                    }
+                    @page {
+                      size: A4 portrait;
+                      margin: 0;
+                    }
+                  }
+                `}</style>
+
+                {/* On-screen view */}
+                <div className="text-center py-6 space-y-4 no-print">
+                  <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
+                    <CheckCircle2 size={32} />
+                  </div>
+
+                  <div>
+                    <div className="text-xs font-bold uppercase tracking-widest text-[var(--gold)]">
+                      SUBMISSION SUCCESSFUL
+                    </div>
+                    <h2 className="mt-1 text-2xl font-serif font-bold text-[var(--navy-deep)]">
+                      Application Submitted Successfully!
+                    </h2>
+                    <p className="mt-1 text-xs text-gray-600 max-w-xl mx-auto font-normal">
+                      Thank you for applying to Greenwood Academy. Your official application summary is ready below.
+                    </p>
+                  </div>
+
+                  <div className="pt-2 flex flex-wrap items-center justify-center gap-3">
+                    <Link
+                      to="/"
+                      className="inline-flex items-center gap-2 bg-[var(--navy-deep)] !text-white px-6 py-2.5 font-bold text-xs uppercase tracking-wider hover:bg-[var(--gold)] transition-colors rounded-none"
+                    >
+                      <span className="!text-white text-white">Back to Home</span>
+                    </Link>
+                    <button
+                      onClick={() => window.print()}
+                      className="inline-flex items-center gap-2 bg-amber-500 text-white px-6 py-2.5 font-bold text-xs uppercase tracking-wider hover:bg-amber-600 transition-colors rounded-none shadow-sm cursor-pointer"
+                    >
+                      <span>🖨️ Print 1-Page Application Slip</span>
+                    </button>
+                  </div>
                 </div>
 
-                <div>
-                  <div className="text-xs font-bold uppercase tracking-widest text-[var(--gold)]">
-                    SUBMISSION SUCCESSFUL
+                {/* 1-PAGE OFFICIAL PRINTABLE APPLICATION SUMMARY SLIP */}
+                <div
+                  id="printable-slip"
+                  className="bg-white border-2 border-[#0B1736] p-5 text-slate-800 text-[11px] font-sans max-w-2xl mx-auto space-y-3 shadow-sm leading-tight"
+                >
+                  {/* Header */}
+                  <div className="border-b-2 border-[#0B1736] pb-2 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <img
+                        src={schoolLogo}
+                        alt="Greenwood Academy Logo"
+                        className="h-10 w-auto object-contain shrink-0"
+                      />
+                      <div>
+                        <h1 className="text-lg font-extrabold text-[#0B1736] tracking-wide uppercase leading-tight">
+                          GREENWOOD ACADEMY
+                        </h1>
+                        <p className="text-[9px] font-semibold text-slate-600">
+                          Senior Secondary CBSE Co-educational School • Affiliation No. 2130491
+                        </p>
+                        <p className="text-[9px] text-slate-500">
+                          Sector 18, Indira Nagar, Lucknow, UP | Helpline: +91 98765 43210
+                        </p>
+                      </div>
+                    </div>
+                    <div className="text-right border-l border-slate-300 pl-3">
+                      <div className="text-[9px] uppercase font-bold text-slate-400">APPLICATION REF NO.</div>
+                      <div className="text-sm font-extrabold text-[#0B1736]">{applicationId}</div>
+                      <div className="text-[9px] text-slate-500">{new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}</div>
+                    </div>
                   </div>
-                  <h2 className="mt-2 text-2xl md:text-3xl font-serif font-bold text-[var(--navy-deep)]">
-                    Application Submitted Successfully!
-                  </h2>
-                  <p className="mt-2 text-sm text-gray-600 max-w-xl mx-auto font-normal">
-                    Thank you for applying to Greenwood Academy. Your application has been logged into our admissions system.
-                  </p>
-                </div>
 
-                <div className="bg-[var(--sand)] p-6 border border-gray-200 inline-block max-w-md w-full text-left rounded-none space-y-2">
-                  <div className="flex justify-between items-center text-xs text-gray-500">
-                    <span>Application Reference ID</span>
-                    <span className="font-bold text-[var(--navy-deep)]">{applicationId}</span>
+                  {/* Title Banner */}
+                  <div className="bg-[#0B1736] text-white text-center py-1 font-bold text-[11px] uppercase tracking-wider">
+                    ADMISSION APPLICATION SLIP (SESSION 2026–2027)
                   </div>
-                  <div className="flex justify-between items-center text-xs text-gray-500">
-                    <span>Applicant Name</span>
-                    <span className="font-bold text-gray-800">{data.name}</span>
-                  </div>
-                  <div className="flex justify-between items-center text-xs text-gray-500">
-                    <span>Grade Applied</span>
-                    <span className="font-bold text-[var(--gold)]">{data.grade}</span>
-                  </div>
-                </div>
 
-                <div className="pt-4 flex flex-wrap items-center justify-center gap-4">
-                  <Link
-                    to="/"
-                    className="inline-flex items-center gap-2 bg-[var(--navy-deep)] !text-white px-6 py-3 font-bold text-xs uppercase tracking-wider hover:bg-[var(--gold)] transition-colors rounded-none"
-                  >
-                    <span className="!text-white text-white">Back to Home</span>
-                  </Link>
-                  <button
-                    onClick={() => window.print()}
-                    className="inline-flex items-center gap-2 border border-gray-300 text-gray-700 px-6 py-3 font-bold text-xs uppercase tracking-wider hover:bg-gray-100 transition-colors rounded-none"
-                  >
-                    Print Application Summary
-                  </button>
+                  {/* Section 1: Candidate Information */}
+                  <div>
+                    <div className="font-bold text-slate-900 border-b border-slate-200 pb-0.5 mb-1.5 text-[11px] uppercase tracking-wide flex items-center justify-between">
+                      <span>1. Candidate Personal Details</span>
+                      <span className="text-[9px] font-bold text-amber-600">Grade Seeking: {data.grade || 'N/A'} {data.stream ? `(${data.stream})` : ''}</span>
+                    </div>
+                    <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-[10px]">
+                      <div><span className="text-slate-500">Candidate Name:</span> <strong className="text-slate-900">{data.name || 'N/A'}</strong></div>
+                      <div><span className="text-slate-500">Date of Birth:</span> <strong className="text-slate-900">{data.dob || 'N/A'}</strong></div>
+                      <div><span className="text-slate-500">Gender:</span> <strong className="text-slate-900">{data.gender || 'N/A'}</strong></div>
+                      <div><span className="text-slate-500">Seeking Class:</span> <strong className="text-slate-900">{data.grade || 'N/A'}</strong></div>
+                    </div>
+                  </div>
+
+                  {/* Section 2: Parent / Guardian Information */}
+                  <div>
+                    <div className="font-bold text-slate-900 border-b border-slate-200 pb-0.5 mb-1.5 text-[11px] uppercase tracking-wide">
+                      2. Parent / Guardian Contact Details
+                    </div>
+                    <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-[10px]">
+                      <div><span className="text-slate-500">Parent/Guardian Name:</span> <strong className="text-slate-900">{data.parentName || 'N/A'}</strong></div>
+                      <div><span className="text-slate-500">Contact Phone:</span> <strong className="text-slate-900">{data.phone || 'N/A'}</strong></div>
+                      <div><span className="text-slate-500">Email Address:</span> <strong className="text-slate-900">{data.email || 'N/A'}</strong></div>
+                      <div><span className="text-slate-500">Occupation:</span> <strong className="text-slate-900">{data.occupation || 'N/A'}</strong></div>
+                      <div className="col-span-2"><span className="text-slate-500">Residential Address:</span> <strong className="text-slate-900">{data.address || 'N/A'}</strong></div>
+                    </div>
+                  </div>
+
+                  {/* Section 3: Academic Record */}
+                  <div>
+                    <div className="font-bold text-slate-900 border-b border-slate-200 pb-0.5 mb-1.5 text-[11px] uppercase tracking-wide">
+                      3. Previous Academic History
+                    </div>
+                    <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-[10px]">
+                      <div><span className="text-slate-500">Previous School:</span> <strong className="text-slate-900">{data.previousSchool || 'N/A'}</strong></div>
+                      <div><span className="text-slate-500">Last Grade Attended:</span> <strong className="text-slate-900">{data.previousGrade || 'N/A'}</strong></div>
+                      <div><span className="text-slate-500">Percentage / Marks:</span> <strong className="text-slate-900">{data.previousPercentage || 'N/A'}</strong></div>
+                      <div><span className="text-slate-500">Transfer Certificate:</span> <strong className="text-slate-900">{data.tcStatus || 'Available / In Process'}</strong></div>
+                    </div>
+                  </div>
+
+                  {/* Verification Checklist */}
+                  <div className="bg-slate-50 p-2 border border-slate-200 text-[9px]">
+                    <div className="font-bold text-slate-800 uppercase mb-1">Submitted Documents & Verification Status:</div>
+                    <div className="grid grid-cols-2 gap-1 text-slate-700">
+                      <div>[{data.docBirthCert !== false ? '✓' : '  '}] Copy of Birth Certificate</div>
+                      <div>[{data.docAadhar !== false ? '✓' : '  '}] Student Aadhar Card Copy</div>
+                      <div>
+                        [{data.docMarksheet !== false ? '✓' : '  '}] Previous Marksheet / Report Card
+                        {data.docMarksheet === false && <span className="block text-[8px] text-red-600 font-bold">({data.marksheetReason === 'Other / Custom Reason' ? data.customMarksheetReason : data.marksheetReason})</span>}
+                      </div>
+                      <div>
+                        [{data.docTc !== false ? '✓' : '  '}] Transfer Certificate (TC)
+                        {data.docTc === false && <span className="block text-[8px] text-red-600 font-bold">({data.tcReason === 'Other / Custom Reason' ? data.customTcReason : data.tcReason})</span>}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Signatures */}
+                  <div className="pt-4 grid grid-cols-2 gap-6 text-[10px]">
+                    <div className="text-center border-t border-slate-400 pt-1 font-bold text-slate-700">
+                      Parent / Guardian Signature
+                    </div>
+                    <div className="text-center border-t border-slate-400 pt-1 font-bold text-[#0B1736]">
+                      Authorized Admission Officer Stamp
+                    </div>
+                  </div>
                 </div>
               </div>
             ) : (
@@ -301,6 +453,85 @@ export default function Apply() {
                         </select>
                         {errors.grade && <p className="mt-1 text-xs text-red-600">{errors.grade}</p>}
                       </div>
+
+                      {/* ADDITIONAL STUDENT DETAILS */}
+                      <div>
+                        <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-2">
+                          Nationality
+                        </label>
+                        <input
+                          type="text"
+                          placeholder="e.g. Indian"
+                          value={data.nationality || 'Indian'}
+                          onChange={(e) => handleChange('nationality', e.target.value)}
+                          className="w-full p-3 bg-gray-50 border border-gray-200 text-sm focus:outline-none focus:border-[var(--navy-deep)] rounded-none"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-2">
+                          Mother Tongue / Native Language
+                        </label>
+                        <input
+                          type="text"
+                          placeholder="e.g. Hindi / English"
+                          value={data.motherTongue || ''}
+                          onChange={(e) => handleChange('motherTongue', e.target.value)}
+                          className="w-full p-3 bg-gray-50 border border-gray-200 text-sm focus:outline-none focus:border-[var(--navy-deep)] rounded-none"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-2">
+                          Student Aadhar Card Number
+                        </label>
+                        <input
+                          type="text"
+                          placeholder="e.g. 12-Digit Aadhar No."
+                          value={data.aadharNo || ''}
+                          onChange={(e) => handleChange('aadharNo', e.target.value)}
+                          maxLength={12}
+                          className="w-full p-3 bg-gray-50 border border-gray-200 text-sm focus:outline-none focus:border-[var(--navy-deep)] rounded-none"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-2">
+                          Category / Social Group
+                        </label>
+                        <select
+                          value={data.category || 'General'}
+                          onChange={(e) => handleChange('category', e.target.value)}
+                          className="w-full p-3 bg-gray-50 border border-gray-200 text-sm focus:outline-none focus:border-[var(--navy-deep)] rounded-none"
+                        >
+                          <option value="General">General</option>
+                          <option value="OBC">OBC</option>
+                          <option value="SC">SC</option>
+                          <option value="ST">ST</option>
+                          <option value="EWS / Other">EWS / Other</option>
+                        </select>
+                      </div>
+
+                      <div className="sm:col-span-2">
+                        <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-2">
+                          Blood Group (Optional)
+                        </label>
+                        <select
+                          value={data.bloodGroup || ''}
+                          onChange={(e) => handleChange('bloodGroup', e.target.value)}
+                          className="w-full p-3 bg-gray-50 border border-gray-200 text-sm focus:outline-none focus:border-[var(--navy-deep)] rounded-none"
+                        >
+                          <option value="">Select Blood Group (If known)</option>
+                          <option value="A+">A+</option>
+                          <option value="A-">A-</option>
+                          <option value="B+">B+</option>
+                          <option value="B-">B-</option>
+                          <option value="O+">O+</option>
+                          <option value="O-">O-</option>
+                          <option value="AB+">AB+</option>
+                          <option value="AB-">AB-</option>
+                        </select>
+                      </div>
                     </div>
                   </div>
                 )}
@@ -330,6 +561,33 @@ export default function Apply() {
                         {errors.parentName && <p className="mt-1 text-xs text-red-600">{errors.parentName}</p>}
                       </div>
 
+                      {/* Father & Mother Specific Details */}
+                      <div>
+                        <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-2">
+                          Father's Occupation
+                        </label>
+                        <input
+                          type="text"
+                          placeholder="e.g. Business / Government Service / Doctor"
+                          value={data.fatherOccupation || ''}
+                          onChange={(e) => handleChange('fatherOccupation', e.target.value)}
+                          className="w-full p-3 bg-gray-50 border border-gray-200 text-sm focus:outline-none focus:border-[var(--navy-deep)] rounded-none"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-2">
+                          Mother's Name & Occupation
+                        </label>
+                        <input
+                          type="text"
+                          placeholder="e.g. Mrs. Sunita Sharma (Teacher / Homemaker)"
+                          value={data.motherDetails || ''}
+                          onChange={(e) => handleChange('motherDetails', e.target.value)}
+                          className="w-full p-3 bg-gray-50 border border-gray-200 text-sm focus:outline-none focus:border-[var(--navy-deep)] rounded-none"
+                        />
+                      </div>
+
                       <div>
                         <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-2">
                           Email Address *
@@ -346,7 +604,7 @@ export default function Apply() {
 
                       <div>
                         <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-2">
-                          Contact Mobile Number *
+                          Primary Mobile Number *
                         </label>
                         <input
                           type="tel"
@@ -358,12 +616,41 @@ export default function Apply() {
                         {errors.phone && <p className="mt-1 text-xs text-red-600">{errors.phone}</p>}
                       </div>
 
+                      <div>
+                        <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-2">
+                          Alternate / WhatsApp Mobile Number
+                        </label>
+                        <input
+                          type="tel"
+                          placeholder="+91 98123 45678"
+                          value={data.altPhone || ''}
+                          onChange={(e) => handleChange('altPhone', e.target.value)}
+                          className="w-full p-3 bg-gray-50 border border-gray-200 text-sm focus:outline-none focus:border-[var(--navy-deep)] rounded-none"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-2">
+                          Annual Family Income Bracket
+                        </label>
+                        <select
+                          value={data.annualIncome || '2L_5L'}
+                          onChange={(e) => handleChange('annualIncome', e.target.value)}
+                          className="w-full p-3 bg-gray-50 border border-gray-200 text-sm focus:outline-none focus:border-[var(--navy-deep)] rounded-none"
+                        >
+                          <option value="Below 2 Lakhs">Below ₹2 Lakhs</option>
+                          <option value="2 - 5 Lakhs">₹2 Lakhs - ₹5 Lakhs</option>
+                          <option value="5 - 10 Lakhs">₹5 Lakhs - ₹10 Lakhs</option>
+                          <option value="Above 10 Lakhs">Above ₹10 Lakhs</option>
+                        </select>
+                      </div>
+
                       <div className="sm:col-span-2">
                         <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-2">
                           Residential Address *
                         </label>
                         <textarea
-                          rows={3}
+                          rows={2}
                           placeholder="House No, Street, Landmark, City, Pincode"
                           value={data.address || ''}
                           onChange={(e) => handleChange('address', e.target.value)}
@@ -426,6 +713,185 @@ export default function Apply() {
                           onChange={(e) => handleChange('lastScore', e.target.value)}
                           className="w-full p-3 bg-gray-50 border border-gray-200 text-sm focus:outline-none focus:border-[var(--navy-deep)] rounded-none"
                         />
+                      </div>
+
+                      {/* Documents Status Checklist */}
+                      <div className="sm:col-span-2 pt-4 border-t border-gray-200">
+                        <label className="block text-xs font-bold uppercase tracking-wider text-gray-800 mb-3">
+                          Documents Submission Checklist (Select Available Documents) *
+                        </label>
+
+                        <div className="space-y-4 bg-gray-50 p-4 border border-gray-200">
+                          {/* 1. Birth Certificate */}
+                          <div className="flex items-center justify-between gap-4">
+                            <label className="flex items-center gap-2 cursor-pointer text-xs font-bold text-gray-800">
+                              <input
+                                type="checkbox"
+                                checked={data.docBirthCert !== false}
+                                onChange={(e) => handleChange('docBirthCert', e.target.checked)}
+                                className="w-4 h-4 text-[var(--navy-deep)] focus:ring-0"
+                              />
+                              <span>1. Birth Certificate Copy</span>
+                            </label>
+                            {data.docBirthCert === false && (
+                              <span className="text-[11px] text-amber-700 font-semibold bg-amber-50 px-2.5 py-1 border border-amber-200">
+                                To be submitted at school office during verification
+                              </span>
+                            )}
+                          </div>
+
+                          {/* 2. Student Aadhar Card */}
+                          <div className="flex items-center justify-between gap-4">
+                            <label className="flex items-center gap-2 cursor-pointer text-xs font-bold text-gray-800">
+                              <input
+                                type="checkbox"
+                                checked={data.docAadhar !== false}
+                                onChange={(e) => handleChange('docAadhar', e.target.checked)}
+                                className="w-4 h-4 text-[var(--navy-deep)] focus:ring-0"
+                              />
+                              <span>2. Student Aadhar Card Copy</span>
+                            </label>
+                            {data.docAadhar === false && (
+                              <span className="text-[11px] text-amber-700 font-semibold bg-amber-50 px-2.5 py-1 border border-amber-200">
+                                To be submitted at school office during verification
+                              </span>
+                            )}
+                          </div>
+
+                          {/* 3. Previous Class Marksheet */}
+                          <div className="space-y-2 border-t border-gray-200 pt-3">
+                            <div className="flex flex-wrap items-center justify-between gap-3">
+                              <div className="flex items-center gap-2 text-xs font-bold text-gray-800">
+                                <input
+                                  type="checkbox"
+                                  id="doc-marksheet-chk"
+                                  checked={data.docMarksheet !== false}
+                                  onChange={(e) => {
+                                    const isChecked = e.target.checked
+                                    handleChange('docMarksheet', isChecked)
+                                    if (!isChecked && !data.marksheetReason) {
+                                      handleChange('marksheetReason', 'Not pursued from previous school / First time school admission')
+                                    }
+                                  }}
+                                  className="w-4 h-4 text-[var(--navy-deep)] focus:ring-0 cursor-pointer"
+                                />
+                                <label htmlFor="doc-marksheet-chk" className="cursor-pointer">
+                                  3. Previous Class Marksheet / Report Card
+                                </label>
+                              </div>
+
+                              {data.docMarksheet === false && (
+                                <span className="text-[10px] font-bold uppercase text-red-600 bg-red-50 px-2 py-0.5 border border-red-200">
+                                  Not Available / Not Applicable
+                                </span>
+                              )}
+                            </div>
+
+                            {/* Reason Dropdown & Custom Text Input if Marksheet NOT checked */}
+                            {data.docMarksheet === false && (
+                              <div className="mt-2 pl-6 space-y-2 animate-fadeIn">
+                                <label className="block text-[11px] font-bold text-gray-700">
+                                  Reason for No Marksheet / Declaration *
+                                </label>
+                                <select
+                                  value={data.marksheetReason || 'Not pursued from previous school / First time school admission'}
+                                  onChange={(e) => handleChange('marksheetReason', e.target.value)}
+                                  className="w-full p-2.5 bg-white border border-gray-300 text-xs text-gray-800 focus:outline-none focus:border-[var(--navy-deep)]"
+                                >
+                                  <option value="Not pursued from previous school / First time school admission">
+                                    Not pursued from previous school / First time school admission (Fresh entry)
+                                  </option>
+                                  <option value="Not to be declared">
+                                    Not to be declared
+                                  </option>
+                                  <option value="Marksheet under evaluation from previous board">
+                                    Marksheet under evaluation / Result awaited from previous school
+                                  </option>
+                                  <option value="Other / Custom Reason">
+                                    Other / Write Custom Reason...
+                                  </option>
+                                </select>
+
+                                {data.marksheetReason === 'Other / Custom Reason' && (
+                                  <input
+                                    type="text"
+                                    placeholder="Write reason for not providing marksheet..."
+                                    value={data.customMarksheetReason || ''}
+                                    onChange={(e) => handleChange('customMarksheetReason', e.target.value)}
+                                    className="w-full p-2.5 bg-white border border-gray-300 text-xs text-gray-800 focus:outline-none"
+                                  />
+                                )}
+                              </div>
+                            )}
+                          </div>
+
+                          {/* 4. Transfer Certificate (TC) */}
+                          <div className="space-y-2 border-t border-gray-200 pt-3">
+                            <div className="flex flex-wrap items-center justify-between gap-3">
+                              <div className="flex items-center gap-2 text-xs font-bold text-gray-800">
+                                <input
+                                  type="checkbox"
+                                  id="doc-tc-chk"
+                                  checked={data.docTc !== false}
+                                  onChange={(e) => {
+                                    const isChecked = e.target.checked
+                                    handleChange('docTc', isChecked)
+                                    if (!isChecked && !data.tcReason) {
+                                      handleChange('tcReason', 'Not pursued from previous school / First time school admission')
+                                    }
+                                  }}
+                                  className="w-4 h-4 text-[var(--navy-deep)] focus:ring-0 cursor-pointer"
+                                />
+                                <label htmlFor="doc-tc-chk" className="cursor-pointer">
+                                  4. Transfer Certificate (TC)
+                                </label>
+                              </div>
+
+                              {data.docTc === false && (
+                                <span className="text-[10px] font-bold uppercase text-red-600 bg-red-50 px-2 py-0.5 border border-red-200">
+                                  Not Available / Not Applicable
+                                </span>
+                              )}
+                            </div>
+
+                            {/* Reason Dropdown & Custom Text Input if TC NOT checked */}
+                            {data.docTc === false && (
+                              <div className="mt-2 pl-6 space-y-2 animate-fadeIn">
+                                <label className="block text-[11px] font-bold text-gray-700">
+                                  Reason for No Transfer Certificate (TC) *
+                                </label>
+                                <select
+                                  value={data.tcReason || 'Not pursued from previous school / First time school admission'}
+                                  onChange={(e) => handleChange('tcReason', e.target.value)}
+                                  className="w-full p-2.5 bg-white border border-gray-300 text-xs text-gray-800 focus:outline-none focus:border-[var(--navy-deep)]"
+                                >
+                                  <option value="Not pursued from previous school / First time school admission">
+                                    Not pursued from previous school / First time school admission (Nursery / Playgroup)
+                                  </option>
+                                  <option value="Not to be declared">
+                                    Not to be declared
+                                  </option>
+                                  <option value="TC applied & in process from previous school">
+                                    TC applied & in process from previous school (To submit within 15 days)
+                                  </option>
+                                  <option value="Other / Custom Reason">
+                                    Other / Write Custom Reason...
+                                  </option>
+                                </select>
+
+                                {data.tcReason === 'Other / Custom Reason' && (
+                                  <input
+                                    type="text"
+                                    placeholder="Write reason for not providing TC..."
+                                    value={data.customTcReason || ''}
+                                    onChange={(e) => handleChange('customTcReason', e.target.value)}
+                                    className="w-full p-2.5 bg-white border border-gray-300 text-xs text-gray-800 focus:outline-none"
+                                  />
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>

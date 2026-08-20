@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { Search, Calendar, Clock, ArrowRight, Tag } from 'lucide-react'
-import newsData from '../data/news'
+import { Search, Calendar, Clock, ArrowRight, Tag, Newspaper } from 'lucide-react'
+import { getNewsList } from '../data/news'
+import { getOptimizedImageUrl } from '../utils/cloudinaryHelper'
 import useDocumentMeta from '../utils/useDocumentMeta'
 import SectionReveal from '../components/common/SectionReveal'
 import creativeToolsSvg from '../assets/bg-images/SchoolArtWork.png'
 
 export default function News() {
+  const [newsArticles, setNewsArticles] = useState(getNewsList)
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedCategory, setSelectedCategory] = useState('All')
 
@@ -17,11 +19,17 @@ export default function News() {
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' })
+
+    const handleUpdate = () => {
+      setNewsArticles(getNewsList())
+    }
+    window.addEventListener('newsUpdated', handleUpdate)
+    return () => window.removeEventListener('newsUpdated', handleUpdate)
   }, [])
 
-  const categories = ['All', ...Array.from(new Set(newsData.map((n) => n.category)))]
+  const categories = ['All', ...Array.from(new Set(newsArticles.map((n) => n.category)))]
 
-  const filteredNews = newsData.filter((n) => {
+  const filteredNews = newsArticles.filter((n) => {
     const matchesSearch =
       n.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       n.excerpt.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -30,7 +38,7 @@ export default function News() {
     return matchesSearch && matchesCategory
   })
 
-  const featuredNews = newsData[0]
+  const featuredNews = newsArticles[0]
 
   return (
     <div className="bg-white min-h-screen text-[var(--navy-deep)]">
@@ -63,8 +71,10 @@ export default function News() {
               <div className="mb-16 bg-[var(--sand)]/40 border border-gray-200 shadow-sm grid lg:grid-cols-2 gap-8 items-center rounded-none overflow-hidden group">
                 <div className="h-[320px] lg:h-[400px] w-full overflow-hidden bg-gray-100">
                   <img
-                    src={featuredNews.image}
+                    src={getOptimizedImageUrl(featuredNews.image, { width: 800 })}
                     alt={featuredNews.title}
+                    loading="lazy"
+                    decoding="async"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
                 </div>
@@ -143,12 +153,33 @@ export default function News() {
                     {/* Feature Image */}
                     <div className="h-[220px] w-full overflow-hidden bg-gray-100 relative">
                       <img
-                        src={n.image}
+                        src={getOptimizedImageUrl(n.image, { width: 500 })}
                         alt={n.title}
+                        loading="lazy"
+                        decoding="async"
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       />
-                      <div className="absolute top-3 left-3 bg-white/95 text-[var(--navy-deep)] text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 border border-gray-200 shadow-xs">
-                        {n.category}
+                      <div className="absolute top-3 left-3 flex items-center gap-1.5">
+                        <span className={`text-[10px] font-extrabold uppercase tracking-wider px-2.5 py-1 shadow-xs border inline-flex items-center gap-1 ${
+                          n.type === 'Event'
+                            ? 'bg-purple-900 text-white border-purple-700'
+                            : 'bg-[#0B1736] text-white border-slate-700'
+                        }`}>
+                          {n.type === 'Event' ? (
+                            <>
+                              <Calendar size={11} />
+                              <span>EVENT</span>
+                            </>
+                          ) : (
+                            <>
+                              <Newspaper size={11} />
+                              <span>NEWS</span>
+                            </>
+                          )}
+                        </span>
+                        <span className="bg-white/95 text-[var(--navy-deep)] text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 border border-gray-200 shadow-xs">
+                          {n.category}
+                        </span>
                       </div>
                     </div>
 

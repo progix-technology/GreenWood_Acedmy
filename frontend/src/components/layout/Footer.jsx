@@ -1,6 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import { MapPin, Phone, Mail, GraduationCap } from 'lucide-react'
+import { MapPin, Phone, Mail } from 'lucide-react'
+import schoolLogo from '../../assets/images/school_website_logo.png'
 
 export default function Footer() {
   return (
@@ -9,9 +10,11 @@ export default function Footer() {
         {/* Brand & Contact Information */}
         <div>
           <div className="flex items-center gap-2.5">
-            <div className="flex h-10 w-10 items-center justify-center rounded bg-[var(--navy)] text-[var(--gold)]">
-              <GraduationCap size={22} />
-            </div>
+            <img
+              src={schoolLogo}
+              alt="Greenwood Academy Logo"
+              className="h-10 w-auto object-contain shrink-0 bg-white/10 p-1 rounded"
+            />
             <div>
               <div className="text-xl font-bold tracking-tight text-white">Greenwood Academy</div>
               <div className="text-[11px] uppercase tracking-widest text-[var(--gold)] font-semibold">Est. 1998, Lucknow</div>

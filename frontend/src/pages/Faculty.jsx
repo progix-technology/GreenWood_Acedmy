@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { Search, GraduationCap, Mail, ArrowRight, Award } from 'lucide-react'
-import facultyData from '../data/faculty'
+import { getFacultyList } from '../data/faculty'
+import { getOptimizedImageUrl } from '../utils/cloudinaryHelper'
 import useDocumentMeta from '../utils/useDocumentMeta'
 import SectionReveal from '../components/common/SectionReveal'
 import creativeToolsSvg from '../assets/bg-images/SchoolArtWork.png'
 
 export default function Faculty() {
+  const [facultyMembers, setFacultyMembers] = useState(getFacultyList)
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedDept, setSelectedDept] = useState('All')
 
@@ -17,11 +19,17 @@ export default function Faculty() {
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' })
+
+    const handleUpdate = () => {
+      setFacultyMembers(getFacultyList())
+    }
+    window.addEventListener('facultyUpdated', handleUpdate)
+    return () => window.removeEventListener('facultyUpdated', handleUpdate)
   }, [])
 
-  const departments = ['All', ...Array.from(new Set(facultyData.map((f) => f.department)))]
+  const departments = ['All', ...Array.from(new Set(facultyMembers.map((f) => f.department)))]
 
-  const filteredFaculty = facultyData.filter((f) => {
+  const filteredFaculty = facultyMembers.filter((f) => {
     const matchesSearch =
       f.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       f.role.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -104,8 +112,10 @@ export default function Faculty() {
                     <div className="h-[220px] w-full overflow-hidden bg-gradient-to-br from-[var(--navy-deep)] to-[#1E3A8A] relative flex flex-col items-center justify-center text-white p-6">
                       {f.image ? (
                         <img
-                          src={f.image}
+                          src={getOptimizedImageUrl(f.image, { width: 400 })}
                           alt={f.name}
+                          loading="lazy"
+                          decoding="async"
                           className="w-full h-full object-cover object-top"
                         />
                       ) : (

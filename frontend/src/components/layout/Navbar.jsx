@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Link, NavLink } from 'react-router-dom'
-import { ChevronDown, Menu, Search, X, GraduationCap } from 'lucide-react'
+import { ChevronDown, Menu, Search, X } from 'lucide-react'
+import schoolLogo from '../../assets/images/school_website_logo.png'
 
 export default function Navbar() {
   const [open, setOpen] = useState(false)
@@ -33,6 +34,7 @@ export default function Navbar() {
         { label: 'Primary School', to: '/academics/primary' },
         { label: 'Middle School', to: '/academics/middle' },
         { label: 'Senior School', to: '/academics/senior' },
+        { label: 'Board Toppers', to: '/board-toppers' },
       ],
     },
     {
@@ -82,9 +84,11 @@ export default function Navbar() {
         <div className="flex h-[58px] items-center justify-between gap-4">
           {/* School Brand Logo */}
           <Link to="/" className="flex items-center gap-2.5 pr-2">
-            <div className="flex h-[42px] w-[42px] items-center justify-center rounded-[4px] bg-[var(--navy-deep)] text-white">
-              <GraduationCap size={24} />
-            </div>
+            <img
+              src={schoolLogo}
+              alt="Greenwood Academy Logo"
+              className="h-11 w-auto object-contain shrink-0"
+            />
             <div className="leading-tight">
               <div className="text-[19px] font-bold text-[var(--navy-deep)] tracking-tight">
                 Greenwood Academy

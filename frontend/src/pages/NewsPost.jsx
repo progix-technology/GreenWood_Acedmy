@@ -1,23 +1,31 @@
-import React, { useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { Calendar, Clock, ArrowLeft, ArrowRight, User } from 'lucide-react'
-import newsData from '../data/news'
+import { getNewsList } from '../data/news'
 import useDocumentMeta from '../utils/useDocumentMeta'
 
 export default function NewsPost() {
   const { slug } = useParams()
-  const article = newsData.find((n) => n.slug === slug) || newsData[0]
+  const [newsArticles, setNewsArticles] = useState(getNewsList)
+
+  const article = newsArticles.find((n) => n.slug === slug) || newsArticles[0]
 
   useDocumentMeta({
-    title: `${article.title} — Greenwood News`,
-    description: article.excerpt,
+    title: `${article ? article.title : 'News'} — Greenwood News`,
+    description: article ? article.excerpt : 'News Article',
   })
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' })
+
+    const handleUpdate = () => {
+      setNewsArticles(getNewsList())
+    }
+    window.addEventListener('newsUpdated', handleUpdate)
+    return () => window.removeEventListener('newsUpdated', handleUpdate)
   }, [slug])
 
-  const relatedArticles = newsData.filter((n) => n.slug !== article.slug).slice(0, 3)
+  const relatedArticles = newsArticles.filter((n) => n.slug !== article?.slug).slice(0, 3)
 
   return (
     <div className="bg-white min-h-screen text-[var(--navy-deep)]">

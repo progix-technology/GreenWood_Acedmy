@@ -1,20 +1,28 @@
-import React, { useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { GraduationCap, Award, Mail, ArrowLeft, ArrowRight, BookOpen } from 'lucide-react'
-import facultyData from '../data/faculty'
+import { getFacultyList } from '../data/faculty'
 import useDocumentMeta from '../utils/useDocumentMeta'
 
 export default function FacultyProfile() {
   const { id } = useParams()
-  const f = facultyData.find((x) => String(x.id) === id) || facultyData[0]
+  const [facultyMembers, setFacultyMembers] = useState(getFacultyList)
+
+  const f = facultyMembers.find((x) => String(x.id) === String(id)) || facultyMembers[0]
 
   useDocumentMeta({
-    title: `${f.name} — Greenwood Faculty`,
-    description: `${f.name}, ${f.role} at Greenwood Academy. ${f.qualification}`,
+    title: `${f ? f.name : 'Faculty'} — Greenwood Faculty`,
+    description: f ? `${f.name}, ${f.role} at Greenwood Academy. ${f.qualification}` : 'Faculty Profile',
   })
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' })
+
+    const handleUpdate = () => {
+      setFacultyMembers(getFacultyList())
+    }
+    window.addEventListener('facultyUpdated', handleUpdate)
+    return () => window.removeEventListener('facultyUpdated', handleUpdate)
   }, [id])
 
   return (

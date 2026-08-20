@@ -5,9 +5,25 @@ import Footer from '../components/layout/Footer'
 import SearchOverlay from '../components/common/SearchOverlay'
 import ErrorBoundary from '../components/common/ErrorBoundary'
 import ScrollToTop from '../components/common/ScrollToTop'
-import { Outlet } from 'react-router-dom'
+import { Outlet, useLocation } from 'react-router-dom'
 
 export default function Layout() {
+  const location = useLocation()
+  const isAdminPage = location.pathname.startsWith('/admin')
+
+  if (isAdminPage) {
+    return (
+      <div className="min-h-screen flex flex-col relative">
+        <SearchOverlay />
+        <main className="flex-1">
+          <ErrorBoundary>
+            <Outlet />
+          </ErrorBoundary>
+        </main>
+      </div>
+    )
+  }
+
   return (
     <div className="min-h-screen flex flex-col relative">
       <TopBar />

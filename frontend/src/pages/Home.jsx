@@ -21,6 +21,7 @@ import {
 } from 'lucide-react'
 import Testimonials from '../components/home/Testimonials'
 import WhyChooseUs from '../components/home/WhyChooseUs'
+import HallOfFameSection from '../components/home/HallOfFameSection'
 import LatestNewsSection from '../components/home/LatestNewsSection'
 import UpcomingEventsSection from '../components/home/UpcomingEventsSection'
 import FaqSection from '../components/home/FaqSection'
@@ -545,6 +546,9 @@ export default function Home() {
         <PrincipalPreview />
       </SectionReveal>
       <WhyChooseUs />
+      <SectionReveal>
+        <HallOfFameSection />
+      </SectionReveal>
       <SectionReveal>
         <AcademicsSection />
       </SectionReveal>

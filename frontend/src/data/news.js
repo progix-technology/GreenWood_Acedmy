@@ -7,8 +7,10 @@ import auditoriumImg from '../assets/images/campus_facilities/auditoriam.webp'
 import smartLibraryImg from '../assets/images/campus_facilities/smartlibrary.webp'
 import scienceClassImg from '../assets/images/campus_facilities/Science_Class.webp'
 
-const newsData = [
+const defaultNewsData = [
   {
+    id: 1,
+    type: 'News',
     slug: 'academic-excellence-award-2026',
     category: 'Achievement',
     date: '12 April 2026',
@@ -21,6 +23,8 @@ const newsData = [
     readTime: '4 min read',
   },
   {
+    id: 2,
+    type: 'Event',
     slug: 'young-alumni-panel-2026',
     category: 'Alumni Guidance',
     date: '18 July 2026',
@@ -33,6 +37,8 @@ const newsData = [
     readTime: '3 min read',
   },
   {
+    id: 3,
+    type: 'Event',
     slug: 'annual-arts-festival-2026',
     category: 'Student Life',
     date: '28 March 2026',
@@ -45,6 +51,8 @@ const newsData = [
     readTime: '3 min read',
   },
   {
+    id: 4,
+    type: 'News',
     slug: 'international-model-un-2026',
     category: 'Global Exposure',
     date: '04 July 2026',
@@ -57,6 +65,8 @@ const newsData = [
     readTime: '4 min read',
   },
   {
+    id: 5,
+    type: 'Event',
     slug: 'stem-robotics-exhibition-2026',
     category: 'Academic',
     date: '15 February 2026',
@@ -69,6 +79,8 @@ const newsData = [
     readTime: '5 min read',
   },
   {
+    id: 6,
+    type: 'Event',
     slug: 'inter-school-athletics-trophy-2026',
     category: 'Sports',
     date: '05 February 2026',
@@ -81,6 +93,8 @@ const newsData = [
     readTime: '3 min read',
   },
   {
+    id: 7,
+    type: 'News',
     slug: 'green-campus-tree-plantation-2026',
     category: 'Sustainability',
     date: '22 June 2026',
@@ -93,6 +107,8 @@ const newsData = [
     readTime: '3 min read',
   },
   {
+    id: 8,
+    type: 'News',
     slug: 'new-stem-innovation-lab-opening',
     category: 'Announcements',
     date: '20 January 2026',
@@ -106,4 +122,25 @@ const newsData = [
   },
 ]
 
-export default newsData
+export const getNewsList = () => {
+  try {
+    const stored = localStorage.getItem('greenwood_news_list')
+    if (stored) {
+      return JSON.parse(stored)
+    }
+  } catch (err) {
+    console.error('Error reading news from localStorage:', err)
+  }
+  return defaultNewsData
+}
+
+export const saveNewsList = (news) => {
+  try {
+    localStorage.setItem('greenwood_news_list', JSON.stringify(news))
+    window.dispatchEvent(new Event('newsUpdated'))
+  } catch (err) {
+    console.error('Error saving news to localStorage:', err)
+  }
+}
+
+export default defaultNewsData

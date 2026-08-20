@@ -7,7 +7,7 @@ import class12Img from '../assets/images/class12.jpg'
 import graduationBgImg from '../assets/images/graduation_bg.jpg'
 import libraryImg from '../assets/images/photo-1561089489-f13d5e730d72.avif'
 
-const galleryData = [
+const defaultGalleryData = [
   {
     id: 1,
     title: 'Greenwood Campus Aerial View',
@@ -66,4 +66,25 @@ const galleryData = [
   },
 ]
 
-export default galleryData
+export const getGalleryPhotos = () => {
+  try {
+    const stored = localStorage.getItem('greenwood_gallery_photos')
+    if (stored) {
+      return JSON.parse(stored)
+    }
+  } catch (err) {
+    console.error('Error reading gallery photos from localStorage:', err)
+  }
+  return defaultGalleryData
+}
+
+export const saveGalleryPhotos = (photos) => {
+  try {
+    localStorage.setItem('greenwood_gallery_photos', JSON.stringify(photos))
+    window.dispatchEvent(new Event('galleryUpdated'))
+  } catch (err) {
+    console.error('Error saving gallery photos to localStorage:', err)
+  }
+}
+
+export default defaultGalleryData

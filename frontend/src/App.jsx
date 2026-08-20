@@ -23,6 +23,7 @@ const CampusLife = lazy(() => import('./pages/CampusLife'))
 const Facilities = lazy(() => import('./pages/Facilities'))
 const Contact = lazy(() => import('./pages/Contact'))
 const Legal = lazy(() => import('./pages/Legal'))
+const ToppersPage = lazy(() => import('./pages/ToppersPage'))
 const FAQ = lazy(() => import('./pages/FAQ'))
 const Login = lazy(() => import('./pages/Login'))
 const AdminDashboard = lazy(() => import('./pages/AdminDashboard'))
@@ -54,6 +55,8 @@ function App() {
               <Route path="events" element={<Events />} />
               <Route path="events/:slug" element={<EventPage />} />
               <Route path="contact" element={<Contact />} />
+              <Route path="board-toppers" element={<ToppersPage />} />
+              <Route path="academics/toppers" element={<ToppersPage />} />
               <Route path="legal/:tab" element={<Legal />} />
               <Route path="privacy" element={<Legal />} />
               <Route path="terms" element={<Legal />} />

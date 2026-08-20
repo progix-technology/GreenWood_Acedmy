@@ -19,6 +19,7 @@ import {
 } from 'lucide-react'
 import useDocumentMeta from '../utils/useDocumentMeta'
 import creativeToolsSvg from '../assets/bg-images/SchoolArtWork.png'
+import { getFeeStructure } from '../data/fees'
 
 // Local Admissions Tab Banner Images from assets
 import feeStructureImg from '../assets/images/Admissions/fee_structure.jpg'
@@ -31,11 +32,20 @@ import examinationImg from '../assets/images/Admissions/examination.jpg'
 
 export default function Admissions() {
   const location = useLocation()
+  const [feeStructureList, setFeeStructureList] = useState(getFeeStructure)
 
   useDocumentMeta({
     title: 'Admissions 2026–27 — Greenwood Academy',
     description: 'Explore Greenwood Academy Admissions. Dynamic view for Admission Process, Fee Structure, Minimum Attendance, School Uniform, Examinations, Co-Curricular, Curriculum, Counselling, and Scholarships.',
   })
+
+  useEffect(() => {
+    const handleFeesUpdate = () => {
+      setFeeStructureList(getFeeStructure())
+    }
+    window.addEventListener('feesUpdated', handleFeesUpdate)
+    return () => window.removeEventListener('feesUpdated', handleFeesUpdate)
+  }, [])
 
   // List of dynamic tabs matching dropdown menu exactly
   const tabs = [
@@ -297,30 +307,14 @@ export default function Admissions() {
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-200 text-gray-700">
-                          <tr className="bg-white">
-                            <td className="p-3.5 font-bold text-[var(--navy-deep)] font-serif">Nursery – UKG</td>
-                            <td className="p-3.5">₹25,000</td>
-                            <td className="p-3.5 font-semibold text-[var(--gold)]">₹12,500 / Month</td>
-                            <td className="p-3.5">₹15,000</td>
-                          </tr>
-                          <tr className="bg-[var(--sand)]/30">
-                            <td className="p-3.5 font-bold text-[var(--navy-deep)] font-serif">Primary (Class 1 – 5)</td>
-                            <td className="p-3.5">₹30,000</td>
-                            <td className="p-3.5 font-semibold text-[var(--gold)]">₹14,800 / Month</td>
-                            <td className="p-3.5">₹18,000</td>
-                          </tr>
-                          <tr className="bg-white">
-                            <td className="p-3.5 font-bold text-[var(--navy-deep)] font-serif">Middle (Class 6 – 8)</td>
-                            <td className="p-3.5">₹35,000</td>
-                            <td className="p-3.5 font-semibold text-[var(--gold)]">₹17,200 / Month</td>
-                            <td className="p-3.5">₹20,000</td>
-                          </tr>
-                          <tr className="bg-[var(--sand)]/30">
-                            <td className="p-3.5 font-bold text-[var(--navy-deep)] font-serif">Senior (Class 9 – 12)</td>
-                            <td className="p-3.5">₹40,000</td>
-                            <td className="p-3.5 font-semibold text-[var(--gold)]">₹19,500 / Month</td>
-                            <td className="p-3.5">₹24,000</td>
-                          </tr>
+                          {feeStructureList.map((item, idx) => (
+                            <tr key={item.id} className={idx % 2 === 0 ? 'bg-white' : 'bg-[var(--sand)]/30'}>
+                              <td className="p-3.5 font-bold text-[var(--navy-deep)] font-serif">{item.stage}</td>
+                              <td className="p-3.5">{item.admissionFee}</td>
+                              <td className="p-3.5 font-semibold text-[var(--gold)]">{item.tuitionFee}</td>
+                              <td className="p-3.5">{item.annualFee}</td>
+                            </tr>
+                          ))}
                         </tbody>
                       </table>
                     </div>

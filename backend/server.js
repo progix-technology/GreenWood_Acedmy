@@ -56,16 +56,16 @@ async function seedSuperAdmin() {
             const passwordHash = await bcrypt.hash(password, 10);
 
             await User.create({
-                name: 'Permanent Super Admin',
+                name: 'Admin',
                 email: adminEmail,
                 passwordHash: passwordHash,
                 role: 'superadmin',
                 isLocked: true // Fixed account protection flag
             });
 
-            console.log(`🔒 Permanent Super Admin created & locked: ${adminEmail}`);
+            console.log(`Permanent Super Admin created & locked: ${adminEmail}`);
         } else {
-            console.log(`🔒 Permanent Super Admin present in DB: ${adminEmail}`);
+            console.log(`Permanent Super Admin present in DB: ${adminEmail}`);
         }
     } catch (err) {
         console.error('Error seeding Super Admin:', err.message);
@@ -93,7 +93,7 @@ app.post('/api/admin/login', loginLimiter, async (req, res) => {
             if (password === fallbackPassword) {
                 user = {
                     id: 'ADM-001',
-                    name: 'Super Admin',
+                    name: 'Admin',
                     email: process.env.ADMIN_EMAIL || 'admin@greenwood.edu.in',
                     role: 'superadmin',
                     isLocked: true
@@ -182,5 +182,135 @@ app.delete('/api/admin/users/:id', authenticateToken, async (req, res) => {
     }
 });
 
+// 6. POST /api/upload (Cloudinary Image Uploader)
+const cloudinary = require('cloudinary').v2;
+
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME || 'dgzxy7pqu',
+    api_key: process.env.CLOUDINARY_API_KEY || '123456789012345',
+    api_secret: process.env.CLOUDINARY_API_SECRET || 'secret',
+});
+
+app.post('/api/upload', express.json({ limit: '10mb' }), async (req, res) => {
+    try {
+        const { image } = req.body;
+        if (!image) {
+            return res.status(400).json({ error: 'No image provided.' });
+        }
+
+        // Upload to Cloudinary if cloud_name is configured
+        if (process.env.CLOUDINARY_CLOUD_NAME && process.env.CLOUDINARY_API_SECRET !== 'secret') {
+            const uploadResponse = await cloudinary.uploader.upload(image, {
+                folder: 'school_website',
+            });
+            return res.json({ url: uploadResponse.secure_url });
+        }
+
+        // Reliable fallback for local dev / instant preview
+        return res.json({ url: image });
+    } catch (err) {
+        console.error('Upload Error:', err.message);
+        return res.json({ url: req.body.image });
+    }
+});
+
+// 7. POST /api/upload/delete (Deletes image from Cloudinary)
+app.post('/api/upload/delete', express.json(), async (req, res) => {
+    try {
+        const { imageUrl } = req.body;
+        if (!imageUrl || !imageUrl.includes('cloudinary.com')) {
+            return res.json({ message: 'Not a Cloudinary image or URL missing.' });
+        }
+
+        // Extract public_id from Cloudinary URL
+        const parts = imageUrl.split('/upload/');
+        if (parts.length > 1) {
+            let publicIdPath = parts[1].replace(/^v\d+\//, '');
+            const lastDotIndex = publicIdPath.lastIndexOf('.');
+            const publicId = lastDotIndex !== -1 ? publicIdPath.substring(0, lastDotIndex) : publicIdPath;
+
+            if (process.env.CLOUDINARY_CLOUD_NAME && process.env.CLOUDINARY_API_SECRET !== 'secret') {
+                const result = await cloudinary.uploader.destroy(publicId);
+                console.log(`🗑️ Cloudinary image deleted (${publicId}):`, result);
+                return res.json({ success: true, result });
+            }
+        }
+        return res.json({ message: 'Cloudinary not configured or invalid public_id' });
+    } catch (err) {
+        console.error('Error deleting Cloudinary image:', err.message);
+        return res.status(500).json({ error: err.message });
+    }
+});
+
+// 8. POST /api/admissions/send-email (Sends custom SMTP email to candidate parent)
+app.post('/api/admissions/send-email', express.json(), async (req, res) => {
+    try {
+        const { toEmail, parentName, studentName, subject, message } = req.body;
+
+        if (!toEmail || !message) {
+            return res.status(400).json({ error: 'Recipient email and message body are required.' });
+        }
+
+        const nodemailer = require('nodemailer');
+
+        // Configure Nodemailer Transporter using SMTP environment variables
+        const transporter = nodemailer.createTransport({
+            host: process.env.SMTP_HOST || 'smtp.gmail.com',
+            port: parseInt(process.env.SMTP_PORT || '587'),
+            secure: process.env.SMTP_SECURE === 'true', // true for 465, false for 587
+            auth: {
+                user: process.env.SMTP_USER || '',
+                pass: process.env.SMTP_PASS || '',
+            },
+        });
+
+        const mailOptions = {
+            from: process.env.SMTP_FROM || `"Greenwood Academy Admissions" <${process.env.SMTP_USER || 'admissions@greenwood.ac.in'}>`,
+            to: toEmail,
+            subject: subject || `Greenwood Academy — Admission Update for ${studentName || 'your child'}`,
+            html: `
+                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; background-color: #ffffff;">
+                    <div style="background-color: #0B1736; color: #ffffff; padding: 20px; text-align: center;">
+                        <h2 style="margin: 0; font-size: 20px; letter-spacing: 1px; color: #f59e0b;">GREENWOOD ACADEMY</h2>
+                        <p style="margin: 4px 0 0 0; font-size: 12px; color: #cbd5e1;">Official Admissions Communication Desk</p>
+                    </div>
+                    <div style="padding: 24px; color: #1e293b; font-size: 14px; line-height: 1.6;">
+                        <p style="margin-top: 0;"><strong>Dear ${parentName || 'Parent / Guardian'},</strong></p>
+                        
+                        <div style="background-color: #f8fafc; border-left: 4px solid #0B1736; padding: 16px; margin: 16px 0; border-radius: 4px; white-space: pre-wrap;">${message}</div>
+
+                        <p style="margin-bottom: 0; font-size: 12px; color: #64748b;">
+                            If you have any questions, feel free to reply directly to this email or call our admissions helpline at <strong>+91 98765 43210</strong>.
+                        </p>
+                    </div>
+                    <div style="background-color: #f1f5f9; padding: 12px; text-align: center; font-size: 11px; color: #94a3b8; border-t: 1px solid #e2e8f0;">
+                        Greenwood Academy • Senior Secondary CBSE Co-ed School • Sector 18, Lucknow
+                    </div>
+                </div>
+            `,
+        };
+
+        console.log(`📧 Attempting Live Email Dispatch to: ${toEmail} via SMTP User: ${process.env.SMTP_USER}`);
+
+        if (process.env.SMTP_USER && process.env.SMTP_PASS) {
+            const info = await transporter.sendMail(mailOptions);
+            console.log('📧 Live Admission Email Sent via Gmail SMTP:', info.messageId);
+            return res.json({ success: true, message: `Email sent successfully to ${toEmail} via Gmail SMTP!`, messageId: info.messageId });
+        } else {
+            console.log(`📧 [Simulated Email Sent] (Configure SMTP_USER & SMTP_PASS in backend/.env for live delivery)`);
+            console.log(`TO: ${toEmail} | SUBJECT: ${subject} | MESSAGE: ${message}`);
+            return res.json({
+                success: true,
+                simulated: true,
+                message: 'Custom Email recorded & simulated successfully! (Add SMTP_USER and SMTP_PASS in backend/.env for live email dispatch).',
+            });
+        }
+    } catch (err) {
+        console.error('Error sending admission email:', err.message);
+        return res.status(500).json({ error: err.message });
+    }
+});
+
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Backend server running with MongoDB Mongoose & Admin Account Lock on http://localhost:${PORT}`));
+app.listen(PORT, () => console.log(`Backend server running with MongoDB Mongoose & Cloudinary Uploader on http://localhost:${PORT}`));
+

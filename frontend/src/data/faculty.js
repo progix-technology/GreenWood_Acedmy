@@ -1,4 +1,4 @@
-const faculty = [
+const defaultFacultyData = [
   {
     id: 1,
     name: 'Dr. Sarah Bennett',
@@ -67,4 +67,25 @@ const faculty = [
   },
 ]
 
-export default faculty
+export const getFacultyList = () => {
+  try {
+    const stored = localStorage.getItem('greenwood_faculty_list')
+    if (stored) {
+      return JSON.parse(stored)
+    }
+  } catch (err) {
+    console.error('Error reading faculty from localStorage:', err)
+  }
+  return defaultFacultyData
+}
+
+export const saveFacultyList = (faculty) => {
+  try {
+    localStorage.setItem('greenwood_faculty_list', JSON.stringify(faculty))
+    window.dispatchEvent(new Event('facultyUpdated'))
+  } catch (err) {
+    console.error('Error saving faculty to localStorage:', err)
+  }
+}
+
+export default defaultFacultyData
