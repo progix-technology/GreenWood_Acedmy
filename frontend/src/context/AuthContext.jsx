@@ -9,6 +9,16 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     if (token) {
+      if (token === 'static_demo_admin_token_2026') {
+        setAdmin({
+          name: 'Admin',
+          email: 'admin@greenwood.edu.in',
+          role: 'superadmin',
+          isLocked: true
+        })
+        return
+      }
+
       authApi
         .getProfile()
         .then((data) => {
