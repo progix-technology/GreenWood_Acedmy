@@ -91,10 +91,29 @@ export const getToppers = () => {
   try {
     const saved = localStorage.getItem(LOCAL_STORAGE_KEY)
     if (saved) {
-      return JSON.parse(saved)
+      const parsed = JSON.parse(saved)
+      // If local cache has full list of 6 toppers, return it
+      if (Array.isArray(parsed) && parsed.length >= 6) {
+        return parsed
+      }
     }
   } catch (err) {
     console.error('Failed to load toppers from localStorage:', err)
+  }
+  // Auto-refresh stale cache to official 6 Cloudinary toppers
+  try {
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(initialToppersData))
+  } catch (e) {}
+  return initialToppersData
+}
+
+export const resetToppersData = () => {
+  try {
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(initialToppersData))
+    window.dispatchEvent(new Event('toppersUpdated'))
+    saveToppers(initialToppersData)
+  } catch (err) {
+    console.error('Failed to reset toppers:', err)
   }
   return initialToppersData
 }

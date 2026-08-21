@@ -82,8 +82,9 @@ export default function AdminDashboard() {
     reader.onloadend = async () => {
       const base64Data = reader.result
       try {
-        // 1. Try Backend Upload Endpoint if available
-        const res = await fetch('http://localhost:5000/api/upload', {
+        // 1. Try Backend Upload Endpoint (Works on both Local & Vercel Live)
+        const apiUrl = import.meta.env.VITE_API_URL || (typeof window !== 'undefined' && window.location.hostname === 'localhost' ? 'http://localhost:5000/api' : '/api')
+        const res = await fetch(`${apiUrl}/upload`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ image: base64Data }),
@@ -256,7 +257,8 @@ export default function AdminDashboard() {
     reader.onloadend = async () => {
       const base64Data = reader.result
       try {
-        const res = await fetch('http://localhost:5000/api/upload', {
+        const apiUrl = import.meta.env.VITE_API_URL || (typeof window !== 'undefined' && window.location.hostname === 'localhost' ? 'http://localhost:5000/api' : '/api')
+        const res = await fetch(`${apiUrl}/upload`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ image: base64Data }),

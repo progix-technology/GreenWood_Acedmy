@@ -189,9 +189,9 @@ app.delete('/api/admin/users/:id', authenticateToken, async (req, res) => {
 const cloudinary = require('cloudinary').v2;
 
 cloudinary.config({
-    cloud_name: process.env.CLOUDINARY_CLOUD_NAME || 'dgzxy7pqu',
-    api_key: process.env.CLOUDINARY_API_KEY || '123456789012345',
-    api_secret: process.env.CLOUDINARY_API_SECRET || 'secret',
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME || 'dbp97xecb',
+    api_key: process.env.CLOUDINARY_API_KEY || '258638138694841',
+    api_secret: process.env.CLOUDINARY_API_SECRET || 'fjEpI02sEA-ZSxrI01e53dP01-o',
 });
 
 app.post('/api/upload', express.json({ limit: '10mb' }), async (req, res) => {
@@ -201,16 +201,12 @@ app.post('/api/upload', express.json({ limit: '10mb' }), async (req, res) => {
             return res.status(400).json({ error: 'No image provided.' });
         }
 
-        // Upload to Cloudinary if cloud_name is configured
-        if (process.env.CLOUDINARY_CLOUD_NAME && process.env.CLOUDINARY_API_SECRET !== 'secret') {
-            const uploadResponse = await cloudinary.uploader.upload(image, {
-                folder: 'school_website',
-            });
-            return res.json({ url: uploadResponse.secure_url });
-        }
-
-        // Reliable fallback for local dev / instant preview
-        return res.json({ url: image });
+        // Upload directly to Cloudinary
+        const uploadResponse = await cloudinary.uploader.upload(image, {
+            folder: 'school_website',
+        });
+        console.log('✅ Image uploaded successfully to Cloudinary:', uploadResponse.secure_url);
+        return res.json({ url: uploadResponse.secure_url });
     } catch (err) {
         console.error('Upload Error:', err.message);
         return res.json({ url: req.body.image });
