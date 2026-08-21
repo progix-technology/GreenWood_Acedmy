@@ -85,10 +85,15 @@ export const initialToppersData = [
   },
 ]
 
-const LOCAL_STORAGE_KEY = 'greenwood_board_toppers'
+const LOCAL_STORAGE_KEY = 'greenwood_board_toppers_v2'
 
 export const getToppers = () => {
   try {
+    // Clear old legacy cache
+    if (localStorage.getItem('greenwood_board_toppers')) {
+      localStorage.removeItem('greenwood_board_toppers')
+    }
+
     const saved = localStorage.getItem(LOCAL_STORAGE_KEY)
     if (saved) {
       const parsed = JSON.parse(saved)
