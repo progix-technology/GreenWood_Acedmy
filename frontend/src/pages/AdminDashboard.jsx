@@ -106,61 +106,73 @@ export default function AdminDashboard() {
 
   const [isUploadingImage, setIsUploadingImage] = useState(false)
 
+  // Client-side auto-compress image to ensure lightning fast upload under 300KB
+  const compressImageFile = (file, maxWidth = 1200, quality = 0.85) => {
+    return new Promise((resolve) => {
+      const reader = new FileReader()
+      reader.readAsDataURL(file)
+      reader.onload = (event) => {
+        const img = new Image()
+        img.src = event.target.result
+        img.onload = () => {
+          const canvas = document.createElement('canvas')
+          let width = img.width
+          let height = img.height
+
+          if (width > maxWidth) {
+            height = Math.round((height * maxWidth) / width)
+            width = maxWidth
+          }
+
+          canvas.width = width
+          canvas.height = height
+          const ctx = canvas.getContext('2d')
+          ctx.drawImage(img, 0, 0, width, height)
+          resolve(canvas.toDataURL('image/jpeg', quality))
+        }
+        img.onerror = () => resolve(event.target.result)
+      }
+      reader.onerror = () => resolve(null)
+    })
+  }
+
   const handleImageFileUpload = async (e) => {
     const file = e.target.files[0]
     if (!file) return
 
     setIsUploadingImage(true)
-    const reader = new FileReader()
-    reader.onloadend = async () => {
-      const base64Data = reader.result
-      try {
-        // 1. Try Backend Upload Endpoint on Render (Direct Cloudinary Upload)
-        const apiUrl = import.meta.env.VITE_API_URL || 'https://greenwood-acedmy.onrender.com/api'
-        const res = await fetch(`${apiUrl}/upload`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ image: base64Data }),
-        }).catch(() => null)
-
-        if (res && res.ok) {
-          const data = await res.json()
-          if (data.url) {
-            setTopperForm((prev) => ({ ...prev, image: data.url }))
-            setIsUploadingImage(false)
-            return
-          }
-        }
-
-        // 2. Direct Cloudinary Unsigned Upload Fallback for Live Static Sites
-        const formData = new FormData()
-        formData.append('file', base64Data)
-        formData.append('upload_preset', 'school_website_preset')
-
-        const cloudRes = await fetch('https://api.cloudinary.com/v1_1/dbp97xecb/image/upload', {
-          method: 'POST',
-          body: formData,
-        }).catch(() => null)
-
-        if (cloudRes && cloudRes.ok) {
-          const cloudData = await cloudRes.json()
-          if (cloudData.secure_url) {
-            setTopperForm((prev) => ({ ...prev, image: cloudData.secure_url }))
-            setIsUploadingImage(false)
-            return
-          }
-        }
-
-        // 3. Final Fallback to base64 preview
-        setTopperForm((prev) => ({ ...prev, image: base64Data }))
-      } catch (err) {
-        console.error('Upload error:', err)
-        setTopperForm((prev) => ({ ...prev, image: base64Data }))
-      } finally {
+    try {
+      // 1. Auto-compress client-side
+      const base64Data = await compressImageFile(file, 1000, 0.85)
+      if (!base64Data) {
         setIsUploadingImage(false)
+        return
       }
+
+      // 2. Direct Cloudinary Upload via Render API
+      const apiUrl = import.meta.env.VITE_API_URL || 'https://greenwood-acedmy.onrender.com/api'
+      const res = await fetch(`${apiUrl}/upload`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ image: base64Data }),
+      }).catch(() => null)
+
+      if (res && res.ok) {
+        const data = await res.json()
+        if (data.url) {
+          setTopperForm((prev) => ({ ...prev, image: data.url }))
+          setIsUploadingImage(false)
+          return
+        }
+      }
+
+      // 3. Fallback to direct unsigned preset if available or base64 preview
+      setTopperForm((prev) => ({ ...prev, image: base64Data }))
+    } catch (err) {
+      console.error('Upload error:', err)
+    } finally {
+      setIsUploadingImage(false)
     }
-    reader.readAsDataURL(file)
   }
 
   const openAddSubjectModal = () => {
