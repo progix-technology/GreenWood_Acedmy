@@ -197,8 +197,11 @@ export default function AdminDashboard() {
     setTopperModalOpen(true)
   }
 
+  const [isSavingTopper, setIsSavingTopper] = useState(false)
+
   const handleSaveTopper = async (e) => {
     e.preventDefault()
+    setIsSavingTopper(true)
     const formattedAchievements = topperForm.achievements
       .split(',')
       .map((s) => s.trim())
@@ -235,7 +238,7 @@ export default function AdminDashboard() {
       )
     } else {
       const newTopper = {
-        id: Date.now(),
+        id: String(Date.now()),
         ...topperForm,
         achievements: formattedAchievements,
       }
@@ -243,7 +246,8 @@ export default function AdminDashboard() {
     }
 
     setToppersList(updated)
-    saveToppers(updated)
+    await saveToppers(updated)
+    setIsSavingTopper(false)
     setTopperModalOpen(false)
   }
 

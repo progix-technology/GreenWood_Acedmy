@@ -32,21 +32,27 @@ export const resetToppersData = () => {
   return []
 }
 
-export const saveToppers = (toppers) => {
+export const saveToppers = async (toppers) => {
   try {
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(toppers))
     window.dispatchEvent(new Event('toppersUpdated'))
 
     // Sync live to Render backend MongoDB server
     const apiUrl = import.meta.env.VITE_API_URL || 'https://greenwood-acedmy.onrender.com/api'
-    fetch(`${apiUrl}/toppers`, {
+    const res = await fetch(`${apiUrl}/toppers`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(toppers),
-    }).catch(() => {})
+    })
+    if (res.ok) {
+      const data = await res.json()
+      console.log('✅ Toppers saved to MongoDB Atlas:', data)
+      return data
+    }
   } catch (err) {
-    console.error('Failed to save toppers to localStorage:', err)
+    console.error('Failed to save toppers to database:', err)
   }
+  return null
 }
 
 export const syncToppersFromApi = async () => {
