@@ -115,8 +115,8 @@ export default function AdminDashboard() {
     reader.onloadend = async () => {
       const base64Data = reader.result
       try {
-        // 1. Try Backend Upload Endpoint (Works on both Local & Vercel Live)
-        const apiUrl = import.meta.env.VITE_API_URL || (typeof window !== 'undefined' && window.location.hostname === 'localhost' ? 'http://localhost:5000/api' : '/api')
+        // 1. Try Backend Upload Endpoint on Render (Direct Cloudinary Upload)
+        const apiUrl = import.meta.env.VITE_API_URL || 'https://greenwood-acedmy.onrender.com/api'
         const res = await fetch(`${apiUrl}/upload`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -292,7 +292,7 @@ export default function AdminDashboard() {
     reader.onloadend = async () => {
       const base64Data = reader.result
       try {
-        const apiUrl = import.meta.env.VITE_API_URL || (typeof window !== 'undefined' && window.location.hostname === 'localhost' ? 'http://localhost:5000/api' : '/api')
+        const apiUrl = import.meta.env.VITE_API_URL || 'https://greenwood-acedmy.onrender.com/api'
         const res = await fetch(`${apiUrl}/upload`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
