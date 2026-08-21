@@ -42,15 +42,20 @@ if (!MONGO_URI || MONGO_URI.includes('127.0.0.1') || MONGO_URI.includes('localho
     MONGO_URI = CLOUD_MONGO_URI;
 }
 
+let lastMongoError = null;
+
 const connectDB = async () => {
     try {
         await mongoose.connect(MONGO_URI, {
-            serverSelectionTimeoutMS: 10000,
+            serverSelectionTimeoutMS: 8000,
             socketTimeoutMS: 45000,
+            family: 4
         });
+        lastMongoError = null;
         console.log('✅ MongoDB Atlas connected successfully to database');
         await seedSuperAdmin();
     } catch (err) {
+        lastMongoError = err.message;
         console.warn('⚠️ MongoDB Connection Notice:', err.message);
         console.log('ℹ️ Retrying MongoDB connection in 5 seconds...');
         setTimeout(connectDB, 5000);
@@ -65,6 +70,7 @@ app.get('/api/health', (req, res) => {
         status: 'ok',
         dbState: mongoose.connection.readyState,
         dbConnected: mongoose.connection.readyState === 1,
+        lastError: lastMongoError,
         uptime: process.uptime()
     });
 });
