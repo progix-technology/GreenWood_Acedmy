@@ -1558,8 +1558,12 @@ export default function AdminDashboard() {
                       <tr key={topper.id} className="hover:bg-slate-50/70 transition-colors">
                         <td className="p-3.5">
                           <div className="flex items-center gap-3">
-                            <div className="w-10 h-12 rounded overflow-hidden border border-slate-300 bg-slate-100 shrink-0">
-                              <img src={getOptimizedImageUrl(topper.image, { width: 200 })} alt={topper.name} loading="lazy" decoding="async" className="w-full h-full object-cover" />
+                            <div className="w-10 h-12 rounded overflow-hidden border border-slate-300 bg-slate-100 shrink-0 flex items-center justify-center">
+                              {topper.image ? (
+                                <img src={getOptimizedImageUrl(topper.image, { width: 200 })} alt={topper.name} loading="lazy" decoding="async" className="w-full h-full object-cover" />
+                              ) : (
+                                <GraduationCap size={16} className="text-slate-400" />
+                              )}
                             </div>
                             <div>
                               <div className="font-bold text-slate-900 text-sm">{topper.name}</div>

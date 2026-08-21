@@ -137,14 +137,21 @@ export default function HallOfFameSection() {
                   <div className="flex items-start gap-4">
                     {/* Student Photo Frame */}
                     <div className="relative shrink-0">
-                      <div className="w-20 h-24 overflow-hidden border-2 border-[var(--navy-deep)] shadow-xs bg-gray-100">
-                        <img
-                          src={getOptimizedImageUrl(topper.image, { width: 300 })}
-                          alt={topper.name}
-                          loading="lazy"
-                          decoding="async"
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                        />
+                      <div className="w-20 h-24 overflow-hidden border-2 border-[var(--navy-deep)] shadow-xs bg-slate-100 flex items-center justify-center">
+                        {topper.image ? (
+                          <img
+                            src={getOptimizedImageUrl(topper.image, { width: 300 })}
+                            alt={topper.name}
+                            loading="lazy"
+                            decoding="async"
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex flex-col items-center justify-center text-slate-400 bg-slate-50 p-1">
+                            <GraduationCap size={26} className="text-[var(--gold)] mb-1" />
+                            <span className="text-[9px] font-bold text-slate-500 uppercase tracking-wider">Photo</span>
+                          </div>
+                        )}
                       </div>
                       {isFirst && (
                         <div className="absolute -top-2 -right-2 bg-[var(--gold)] text-white p-1 rounded-full shadow-sm">
@@ -218,12 +225,16 @@ export default function HallOfFameSection() {
             </button>
 
             <div className="flex items-center gap-4 border-b border-gray-200 pb-4 mb-5">
-              <div className="w-16 h-20 overflow-hidden border border-gray-300 shrink-0">
-                <img
-                  src={selectedTopper.image}
-                  alt={selectedTopper.name}
-                  className="w-full h-full object-cover"
-                />
+              <div className="w-16 h-20 overflow-hidden border border-gray-300 shrink-0 bg-slate-100 flex items-center justify-center">
+                {selectedTopper.image ? (
+                  <img
+                    src={selectedTopper.image}
+                    alt={selectedTopper.name}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <GraduationCap size={24} className="text-[var(--gold)]" />
+                )}
               </div>
               <div>
                 <span className="px-2 py-0.5 bg-[var(--sand)] text-[var(--navy-deep)] text-[10px] font-bold uppercase border border-[var(--gold)]/40">
