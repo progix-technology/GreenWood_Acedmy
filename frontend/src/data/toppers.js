@@ -92,18 +92,13 @@ export const getToppers = () => {
     const saved = localStorage.getItem(LOCAL_STORAGE_KEY)
     if (saved) {
       const parsed = JSON.parse(saved)
-      // If local cache has full list of 6 toppers, return it
-      if (Array.isArray(parsed) && parsed.length >= 6) {
+      if (Array.isArray(parsed)) {
         return parsed
       }
     }
   } catch (err) {
     console.error('Failed to load toppers from localStorage:', err)
   }
-  // Auto-refresh stale cache to official 6 Cloudinary toppers
-  try {
-    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(initialToppersData))
-  } catch (e) {}
   return initialToppersData
 }
 
@@ -123,7 +118,7 @@ export const saveToppers = (toppers) => {
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(toppers))
     window.dispatchEvent(new Event('toppersUpdated'))
 
-    // Sync live to backend MongoDB server if active
+    // Sync live to Render backend MongoDB server
     const apiUrl = import.meta.env.VITE_API_URL || 'https://greenwood-acedmy.onrender.com/api'
     fetch(`${apiUrl}/toppers`, {
       method: 'POST',
@@ -141,13 +136,10 @@ export const syncToppersFromApi = async () => {
     const res = await fetch(`${apiUrl}/toppers`)
     if (res.ok) {
       const data = await res.json()
-      if (Array.isArray(data) && data.length > 0) {
+      if (Array.isArray(data)) {
         localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(data))
         window.dispatchEvent(new Event('toppersUpdated'))
         return data
-      } else if (Array.isArray(data) && data.length === 0) {
-        // Seed MongoDB Cloud with official toppers
-        saveToppers(initialToppersData)
       }
     }
   } catch (err) {

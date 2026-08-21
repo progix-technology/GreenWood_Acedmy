@@ -213,7 +213,8 @@ export default function AdminDashboard() {
         editingTopper.image.includes('cloudinary.com')
       ) {
         try {
-          await fetch('http://localhost:5000/api/upload/delete', {
+          const apiUrl = import.meta.env.VITE_API_URL || 'https://greenwood-acedmy.onrender.com/api'
+          await fetch(`${apiUrl}/upload/delete`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ imageUrl: editingTopper.image }),
@@ -253,7 +254,8 @@ export default function AdminDashboard() {
       // Delete photo from Cloudinary if hosted on Cloudinary
       if (topperToDelete && topperToDelete.image && topperToDelete.image.includes('cloudinary.com')) {
         try {
-          await fetch('http://localhost:5000/api/upload/delete', {
+          const apiUrl = import.meta.env.VITE_API_URL || 'https://greenwood-acedmy.onrender.com/api'
+          await fetch(`${apiUrl}/upload/delete`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ imageUrl: topperToDelete.image }),
