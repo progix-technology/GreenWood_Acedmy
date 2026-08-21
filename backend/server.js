@@ -35,7 +35,7 @@ const loginLimiter = rateLimit({
 });
 
 // Database Connection & Permanent Super Admin Auto-Seeder
-const MONGO_URI = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/greenwood_school';
+const MONGO_URI = process.env.MONGO_URI || 'mongodb+srv://progixtechnology_db_user:rH6296GOGVlexPah@cluster0.fbigv9q.mongodb.net/greenwood_school?retryWrites=true&w=majority&appName=Cluster0';
 
 mongoose
     .connect(MONGO_URI)

@@ -145,6 +145,9 @@ export const syncToppersFromApi = async () => {
         localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(data))
         window.dispatchEvent(new Event('toppersUpdated'))
         return data
+      } else if (Array.isArray(data) && data.length === 0) {
+        // Seed MongoDB Cloud with official toppers
+        saveToppers(initialToppersData)
       }
     }
   } catch (err) {
