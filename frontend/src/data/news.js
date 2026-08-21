@@ -150,4 +150,26 @@ export const saveNewsList = (news) => {
   }
 }
 
+export const syncNewsFromApi = async () => {
+  try {
+    const apiUrl = import.meta.env.VITE_API_URL || (typeof window !== 'undefined' && window.location.hostname === 'localhost' ? 'http://localhost:5000/api' : '/api')
+    const res = await fetch(`${apiUrl}/news`)
+    if (res.ok) {
+      const data = await res.json()
+      if (Array.isArray(data) && data.length > 0) {
+        localStorage.setItem('greenwood_news_list', JSON.stringify(data))
+        window.dispatchEvent(new Event('newsUpdated'))
+        return data
+      }
+    }
+  } catch (err) {
+    console.error('Failed to sync news from API:', err)
+  }
+  return null
+}
+
+if (typeof window !== 'undefined') {
+  syncNewsFromApi()
+}
+
 export default defaultNewsData

@@ -94,4 +94,26 @@ export const saveGalleryPhotos = (photos) => {
   }
 }
 
+export const syncGalleryFromApi = async () => {
+  try {
+    const apiUrl = import.meta.env.VITE_API_URL || (typeof window !== 'undefined' && window.location.hostname === 'localhost' ? 'http://localhost:5000/api' : '/api')
+    const res = await fetch(`${apiUrl}/gallery`)
+    if (res.ok) {
+      const data = await res.json()
+      if (Array.isArray(data) && data.length > 0) {
+        localStorage.setItem('greenwood_gallery_photos', JSON.stringify(data))
+        window.dispatchEvent(new Event('galleryUpdated'))
+        return data
+      }
+    }
+  } catch (err) {
+    console.error('Failed to sync gallery from API:', err)
+  }
+  return null
+}
+
+if (typeof window !== 'undefined') {
+  syncGalleryFromApi()
+}
+
 export default defaultGalleryData

@@ -116,4 +116,26 @@ export const saveToppers = (toppers) => {
   }
 }
 
+export const syncToppersFromApi = async () => {
+  try {
+    const apiUrl = import.meta.env.VITE_API_URL || (typeof window !== 'undefined' && window.location.hostname === 'localhost' ? 'http://localhost:5000/api' : '/api')
+    const res = await fetch(`${apiUrl}/toppers`)
+    if (res.ok) {
+      const data = await res.json()
+      if (Array.isArray(data) && data.length > 0) {
+        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(data))
+        window.dispatchEvent(new Event('toppersUpdated'))
+        return data
+      }
+    }
+  } catch (err) {
+    console.error('Failed to sync toppers from API:', err)
+  }
+  return null
+}
+
+if (typeof window !== 'undefined') {
+  syncToppersFromApi()
+}
+
 export default getToppers()

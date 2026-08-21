@@ -95,4 +95,26 @@ export const saveFacultyList = (faculty) => {
   }
 }
 
+export const syncFacultyFromApi = async () => {
+  try {
+    const apiUrl = import.meta.env.VITE_API_URL || (typeof window !== 'undefined' && window.location.hostname === 'localhost' ? 'http://localhost:5000/api' : '/api')
+    const res = await fetch(`${apiUrl}/faculty`)
+    if (res.ok) {
+      const data = await res.json()
+      if (Array.isArray(data) && data.length > 0) {
+        localStorage.setItem('greenwood_faculty_list', JSON.stringify(data))
+        window.dispatchEvent(new Event('facultyUpdated'))
+        return data
+      }
+    }
+  } catch (err) {
+    console.error('Failed to sync faculty from API:', err)
+  }
+  return null
+}
+
+if (typeof window !== 'undefined') {
+  syncFacultyFromApi()
+}
+
 export default defaultFacultyData
