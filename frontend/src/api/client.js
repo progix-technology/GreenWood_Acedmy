@@ -1,4 +1,5 @@
-const BASE_URL = import.meta.env.VITE_API_URL || (typeof window !== 'undefined' && window.location.hostname === 'localhost' ? 'http://localhost:5000/api' : '/api')
+const RENDER_BACKEND_URL = 'https://greenwood-acedmy.onrender.com/api'
+const BASE_URL = import.meta.env.VITE_API_URL || RENDER_BACKEND_URL
 
 /**
  * Custom Fetch Wrapper with automatic Credentials (HttpOnly Cookie support) & Bearer Headers

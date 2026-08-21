@@ -124,7 +124,7 @@ export const saveToppers = (toppers) => {
     window.dispatchEvent(new Event('toppersUpdated'))
 
     // Sync live to backend MongoDB server if active
-    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
+    const apiUrl = import.meta.env.VITE_API_URL || 'https://greenwood-acedmy.onrender.com/api'
     fetch(`${apiUrl}/toppers`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -137,7 +137,7 @@ export const saveToppers = (toppers) => {
 
 export const syncToppersFromApi = async () => {
   try {
-    const apiUrl = import.meta.env.VITE_API_URL || (typeof window !== 'undefined' && window.location.hostname === 'localhost' ? 'http://localhost:5000/api' : '/api')
+    const apiUrl = import.meta.env.VITE_API_URL || 'https://greenwood-acedmy.onrender.com/api'
     const res = await fetch(`${apiUrl}/toppers`)
     if (res.ok) {
       const data = await res.json()

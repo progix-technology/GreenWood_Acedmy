@@ -83,7 +83,7 @@ export const saveGalleryPhotos = (photos) => {
     localStorage.setItem('greenwood_gallery_photos', JSON.stringify(photos))
     window.dispatchEvent(new Event('galleryUpdated'))
 
-    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
+    const apiUrl = import.meta.env.VITE_API_URL || 'https://greenwood-acedmy.onrender.com/api'
     fetch(`${apiUrl}/gallery`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -96,7 +96,7 @@ export const saveGalleryPhotos = (photos) => {
 
 export const syncGalleryFromApi = async () => {
   try {
-    const apiUrl = import.meta.env.VITE_API_URL || (typeof window !== 'undefined' && window.location.hostname === 'localhost' ? 'http://localhost:5000/api' : '/api')
+    const apiUrl = import.meta.env.VITE_API_URL || 'https://greenwood-acedmy.onrender.com/api'
     const res = await fetch(`${apiUrl}/gallery`)
     if (res.ok) {
       const data = await res.json()
