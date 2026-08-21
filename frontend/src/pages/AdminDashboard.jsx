@@ -225,7 +225,7 @@ export default function AdminDashboard() {
       }
 
       updated = toppersList.map((t) =>
-        t.id === editingTopper.id
+        (String(t.id) === String(editingTopper.id) || (t._id && t._id === editingTopper._id))
           ? {
               ...t,
               ...topperForm,
@@ -249,7 +249,7 @@ export default function AdminDashboard() {
 
   const handleDeleteTopper = async (id) => {
     if (window.confirm('Are you sure you want to delete this board topper record?')) {
-      const topperToDelete = toppersList.find((t) => t.id === id)
+      const topperToDelete = toppersList.find((t) => String(t.id) === String(id) || t._id === id)
 
       // Delete photo from Cloudinary if hosted on Cloudinary
       if (topperToDelete && topperToDelete.image && topperToDelete.image.includes('cloudinary.com')) {
@@ -265,7 +265,7 @@ export default function AdminDashboard() {
         }
       }
 
-      const updated = toppersList.filter((t) => t.id !== id)
+      const updated = toppersList.filter((t) => String(t.id) !== String(id) && t._id !== id)
       setToppersList(updated)
       saveToppers(updated)
     }
@@ -369,7 +369,8 @@ export default function AdminDashboard() {
         editingGalleryItem.image.includes('cloudinary.com')
       ) {
         try {
-          await fetch('http://localhost:5000/api/upload/delete', {
+          const apiUrl = import.meta.env.VITE_API_URL || 'https://greenwood-acedmy.onrender.com/api'
+          await fetch(`${apiUrl}/upload/delete`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ imageUrl: editingGalleryItem.image }),
@@ -380,7 +381,7 @@ export default function AdminDashboard() {
       }
 
       updated = galleryList.map((g) =>
-        g.id === editingGalleryItem.id
+        (String(g.id) === String(editingGalleryItem.id) || (g._id && g._id === editingGalleryItem._id))
           ? {
               ...g,
               ...galleryForm,
@@ -402,10 +403,11 @@ export default function AdminDashboard() {
 
   const handleDeleteGalleryItem = async (id) => {
     if (window.confirm('Are you sure you want to delete this gallery photo?')) {
-      const itemToDelete = galleryList.find((g) => g.id === id)
+      const itemToDelete = galleryList.find((g) => String(g.id) === String(id) || g._id === id)
       if (itemToDelete && itemToDelete.image && itemToDelete.image.includes('cloudinary.com')) {
         try {
-          await fetch('http://localhost:5000/api/upload/delete', {
+          const apiUrl = import.meta.env.VITE_API_URL || 'https://greenwood-acedmy.onrender.com/api'
+          await fetch(`${apiUrl}/upload/delete`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ imageUrl: itemToDelete.image }),
@@ -415,7 +417,7 @@ export default function AdminDashboard() {
         }
       }
 
-      const updated = galleryList.filter((g) => g.id !== id)
+      const updated = galleryList.filter((g) => String(g.id) !== String(id) && g._id !== id)
       setGalleryList(updated)
       saveGalleryPhotos(updated)
     }
