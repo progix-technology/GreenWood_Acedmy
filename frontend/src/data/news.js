@@ -138,6 +138,13 @@ export const saveNewsList = (news) => {
   try {
     localStorage.setItem('greenwood_news_list', JSON.stringify(news))
     window.dispatchEvent(new Event('newsUpdated'))
+
+    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
+    fetch(`${apiUrl}/news`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(news),
+    }).catch(() => {})
   } catch (err) {
     console.error('Error saving news to localStorage:', err)
   }

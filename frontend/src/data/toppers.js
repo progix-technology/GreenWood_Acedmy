@@ -105,7 +105,8 @@ export const saveToppers = (toppers) => {
     window.dispatchEvent(new Event('toppersUpdated'))
 
     // Sync live to backend MongoDB server if active
-    fetch('http://localhost:5000/api/toppers', {
+    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
+    fetch(`${apiUrl}/toppers`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(toppers),

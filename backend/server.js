@@ -12,8 +12,11 @@ const User = require('./models/User');
 const app = express();
 
 // Security Headers & CORS Middleware
-app.use(cors({ origin: 'http://localhost:5173', credentials: true }));
-app.use(express.json());
+app.use(cors({
+    origin: (origin, callback) => callback(null, true),
+    credentials: true
+}));
+app.use(express.json({ limit: '10mb' }));
 app.use(cookieParser());
 
 // Anti-XSS & Security Headers
@@ -367,6 +370,180 @@ app.post('/api/toppers', async (req, res) => {
     }
 });
 
+// Gallery Schema & Endpoints
+const gallerySchema = new mongoose.Schema({
+    id: String,
+    title: String,
+    category: String,
+    image: String,
+    caption: String
+}, { timestamps: true });
+const Gallery = mongoose.models.Gallery || mongoose.model('Gallery', gallerySchema);
+
+app.get('/api/gallery', async (req, res) => {
+    try {
+        if (mongoose.connection.readyState === 1) {
+            const list = await Gallery.find().sort({ createdAt: -1 });
+            if (list.length > 0) return res.json(list);
+        }
+        res.json([]);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.post('/api/gallery', async (req, res) => {
+    try {
+        const items = req.body;
+        if (mongoose.connection.readyState === 1) {
+            if (Array.isArray(items)) {
+                await Gallery.deleteMany({});
+                const saved = await Gallery.insertMany(items);
+                return res.json({ success: true, items: saved });
+            } else {
+                const newItem = await Gallery.create(items);
+                return res.json({ success: true, item: newItem });
+            }
+        }
+        res.json({ success: true, message: 'Saved in memory' });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// News Schema & Endpoints
+const newsSchema = new mongoose.Schema({
+    id: String,
+    type: String,
+    slug: String,
+    category: String,
+    date: String,
+    title: String,
+    excerpt: String,
+    content: String,
+    image: String,
+    author: String,
+    readTime: String
+}, { timestamps: true });
+const News = mongoose.models.News || mongoose.model('News', newsSchema);
+
+app.get('/api/news', async (req, res) => {
+    try {
+        if (mongoose.connection.readyState === 1) {
+            const list = await News.find().sort({ createdAt: -1 });
+            if (list.length > 0) return res.json(list);
+        }
+        res.json([]);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.post('/api/news', async (req, res) => {
+    try {
+        const items = req.body;
+        if (mongoose.connection.readyState === 1) {
+            if (Array.isArray(items)) {
+                await News.deleteMany({});
+                const saved = await News.insertMany(items);
+                return res.json({ success: true, items: saved });
+            } else {
+                const newItem = await News.create(items);
+                return res.json({ success: true, item: newItem });
+            }
+        }
+        res.json({ success: true, message: 'Saved in memory' });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// Faculty Schema & Endpoints
+const facultySchema = new mongoose.Schema({
+    id: String,
+    name: String,
+    role: String,
+    department: String,
+    qualification: String,
+    experience: String,
+    image: String,
+    bio: String,
+    email: String
+}, { timestamps: true });
+const Faculty = mongoose.models.Faculty || mongoose.model('Faculty', facultySchema);
+
+app.get('/api/faculty', async (req, res) => {
+    try {
+        if (mongoose.connection.readyState === 1) {
+            const list = await Faculty.find().sort({ createdAt: -1 });
+            if (list.length > 0) return res.json(list);
+        }
+        res.json([]);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.post('/api/faculty', async (req, res) => {
+    try {
+        const items = req.body;
+        if (mongoose.connection.readyState === 1) {
+            if (Array.isArray(items)) {
+                await Faculty.deleteMany({});
+                const saved = await Faculty.insertMany(items);
+                return res.json({ success: true, items: saved });
+            } else {
+                const newItem = await Faculty.create(items);
+                return res.json({ success: true, item: newItem });
+            }
+        }
+        res.json({ success: true, message: 'Saved in memory' });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// Admissions List Schema & Endpoints
+const admissionSchema = new mongoose.Schema({
+    id: String,
+    studentName: String,
+    parentName: String,
+    classApplied: String,
+    email: String,
+    phone: String,
+    status: String,
+    date: String,
+    details: Object
+}, { timestamps: true });
+const Admission = mongoose.models.Admission || mongoose.model('Admission', admissionSchema);
+
+app.get('/api/admissions/list', async (req, res) => {
+    try {
+        if (mongoose.connection.readyState === 1) {
+            const list = await Admission.find().sort({ createdAt: -1 });
+            if (list.length > 0) return res.json(list);
+        }
+        res.json([]);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.post('/api/admissions/apply', async (req, res) => {
+    try {
+        const appData = req.body;
+        if (mongoose.connection.readyState === 1) {
+            const newApp = await Admission.create(appData);
+            return res.json({ success: true, application: newApp });
+        }
+        res.json({ success: true, message: 'Application recorded' });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Backend server running with MongoDB Mongoose & Cloudinary Uploader on http://localhost:${PORT}`));
+
+module.exports = app;
 

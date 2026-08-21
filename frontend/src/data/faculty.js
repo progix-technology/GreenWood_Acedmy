@@ -83,6 +83,13 @@ export const saveFacultyList = (faculty) => {
   try {
     localStorage.setItem('greenwood_faculty_list', JSON.stringify(faculty))
     window.dispatchEvent(new Event('facultyUpdated'))
+
+    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
+    fetch(`${apiUrl}/faculty`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(faculty),
+    }).catch(() => {})
   } catch (err) {
     console.error('Error saving faculty to localStorage:', err)
   }

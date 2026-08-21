@@ -82,6 +82,13 @@ export const saveGalleryPhotos = (photos) => {
   try {
     localStorage.setItem('greenwood_gallery_photos', JSON.stringify(photos))
     window.dispatchEvent(new Event('galleryUpdated'))
+
+    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
+    fetch(`${apiUrl}/gallery`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(photos),
+    }).catch(() => {})
   } catch (err) {
     console.error('Error saving gallery photos to localStorage:', err)
   }
