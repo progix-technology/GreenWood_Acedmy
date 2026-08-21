@@ -105,18 +105,29 @@ export default function HallOfFameSection() {
         </div>
 
         {/* Toppers Cards Grid */}
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {filteredToppers.map((topper) => {
-            const isFirst = topper.rankBadge.includes('1st')
-            return (
-              <div
-                key={topper.id}
-                className={`bg-white border transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl flex flex-col justify-between relative group ${
-                  isFirst
-                    ? 'border-[var(--gold)] ring-1 ring-[var(--gold)]/30'
-                    : 'border-gray-200'
-                }`}
-              >
+        {filteredToppers.length === 0 ? (
+          <div className="bg-white border border-gray-200 p-12 text-center shadow-xs">
+            <div className="w-16 h-16 bg-[var(--sand)] rounded-full flex items-center justify-center mx-auto mb-4 border border-[var(--gold)]/30">
+              <Trophy size={28} className="text-[var(--gold)]" />
+            </div>
+            <h3 className="text-xl font-serif font-bold text-[var(--navy-deep)] mb-2">No Board Topper Records Yet</h3>
+            <p className="text-sm text-gray-500 max-w-md mx-auto">
+              Board toppers and academic merit records will appear here as soon as they are added via the Admin Dashboard.
+            </p>
+          </div>
+        ) : (
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {filteredToppers.map((topper) => {
+              const isFirst = topper.rankBadge ? topper.rankBadge.includes('1st') : false
+              return (
+                <div
+                  key={topper.id || topper._id}
+                  className={`bg-white border transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl flex flex-col justify-between relative group ${
+                    isFirst
+                      ? 'border-[var(--gold)] ring-1 ring-[var(--gold)]/30'
+                      : 'border-gray-200'
+                  }`}
+                >
                 {/* Top Banner Tag */}
                 <div className="flex items-center justify-between p-4 border-b border-gray-100 bg-gray-50/50">
                   <span className="text-[11px] font-bold uppercase tracking-wider text-[var(--navy-deep)] flex items-center gap-1.5">
@@ -211,7 +222,8 @@ export default function HallOfFameSection() {
             )
           })}
         </div>
-      </div>
+      )}
+    </div>
 
       {/* Student Story Modal */}
       {selectedTopper && (
