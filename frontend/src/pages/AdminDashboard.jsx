@@ -34,11 +34,11 @@ import {
   CreditCard,
   Mail
 } from 'lucide-react'
-import { getToppers, saveToppers } from '../data/toppers'
-import { getGalleryPhotos, saveGalleryPhotos } from '../data/gallery'
+import { getToppers, saveToppers, syncToppersFromApi } from '../data/toppers'
+import { getGalleryPhotos, saveGalleryPhotos, syncGalleryFromApi } from '../data/gallery'
 import { getFeeStructure, saveFeeStructure } from '../data/fees'
-import { getNewsList, saveNewsList } from '../data/news'
-import { getFacultyList, saveFacultyList } from '../data/faculty'
+import { getNewsList, saveNewsList, syncNewsFromApi } from '../data/news'
+import { getFacultyList, saveFacultyList, syncFacultyFromApi } from '../data/faculty'
 import { getStudentsList, saveStudentsList } from '../data/students'
 import { getAdmissionsList, saveAdmissionsList } from '../data/admissions'
 
@@ -56,6 +56,39 @@ export default function AdminDashboard() {
 
   // Board Toppers state
   const [toppersList, setToppersList] = useState(getToppers)
+
+  // On mount, pull latest real-time data from Render MongoDB Backend
+  useEffect(() => {
+    syncToppersFromApi().then((data) => {
+      if (data && Array.isArray(data) && data.length > 0) setToppersList(data)
+    })
+    syncGalleryFromApi().then((data) => {
+      if (data && Array.isArray(data) && data.length > 0) setGalleryList(data)
+    })
+    syncNewsFromApi().then((data) => {
+      if (data && Array.isArray(data) && data.length > 0) setNewsList(data)
+    })
+    syncFacultyFromApi().then((data) => {
+      if (data && Array.isArray(data) && data.length > 0) setFacultyList(data)
+    })
+
+    const handleTopperUpdate = () => setToppersList(getToppers())
+    const handleGalleryUpdate = () => setGalleryList(getGalleryPhotos())
+    const handleNewsUpdate = () => setNewsList(getNewsList())
+    const handleFacultyUpdate = () => setFacultyList(getFacultyList())
+
+    window.addEventListener('toppersUpdated', handleTopperUpdate)
+    window.addEventListener('galleryUpdated', handleGalleryUpdate)
+    window.addEventListener('newsUpdated', handleNewsUpdate)
+    window.addEventListener('facultyUpdated', handleFacultyUpdate)
+
+    return () => {
+      window.removeEventListener('toppersUpdated', handleTopperUpdate)
+      window.removeEventListener('galleryUpdated', handleGalleryUpdate)
+      window.removeEventListener('newsUpdated', handleNewsUpdate)
+      window.removeEventListener('facultyUpdated', handleFacultyUpdate)
+    }
+  }, [])
   const [editingTopper, setEditingTopper] = useState(null)
   const [topperModalOpen, setTopperModalOpen] = useState(false)
   const [topperForm, setTopperForm] = useState({

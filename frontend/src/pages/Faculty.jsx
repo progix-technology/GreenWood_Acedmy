@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { Search, GraduationCap, Mail, ArrowRight, Award } from 'lucide-react'
-import { getFacultyList } from '../data/faculty'
+import { getFacultyList, syncFacultyFromApi } from '../data/faculty'
 import { getOptimizedImageUrl } from '../utils/cloudinaryHelper'
 import useDocumentMeta from '../utils/useDocumentMeta'
 import SectionReveal from '../components/common/SectionReveal'
@@ -19,6 +19,12 @@ export default function Faculty() {
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' })
+
+    syncFacultyFromApi().then((data) => {
+      if (data && Array.isArray(data) && data.length > 0) {
+        setFacultyMembers(data)
+      }
+    })
 
     const handleUpdate = () => {
       setFacultyMembers(getFacultyList())

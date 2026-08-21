@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { X, ZoomIn, ArrowRight } from 'lucide-react'
-import { getGalleryPhotos } from '../data/gallery'
+import { getGalleryPhotos, syncGalleryFromApi } from '../data/gallery'
 import { getOptimizedImageUrl } from '../utils/cloudinaryHelper'
 import useDocumentMeta from '../utils/useDocumentMeta'
 import SectionReveal from '../components/common/SectionReveal'
@@ -19,6 +19,12 @@ export default function Gallery() {
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' })
+
+    syncGalleryFromApi().then((data) => {
+      if (data && Array.isArray(data) && data.length > 0) {
+        setGalleryPhotos(data)
+      }
+    })
 
     const handleUpdate = () => {
       setGalleryPhotos(getGalleryPhotos())

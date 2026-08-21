@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { Search, Calendar, Clock, ArrowRight, Tag, Newspaper } from 'lucide-react'
-import { getNewsList } from '../data/news'
+import { getNewsList, syncNewsFromApi } from '../data/news'
 import { getOptimizedImageUrl } from '../utils/cloudinaryHelper'
 import useDocumentMeta from '../utils/useDocumentMeta'
 import SectionReveal from '../components/common/SectionReveal'
@@ -19,6 +19,12 @@ export default function News() {
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' })
+
+    syncNewsFromApi().then((data) => {
+      if (data && Array.isArray(data) && data.length > 0) {
+        setNewsArticles(data)
+      }
+    })
 
     const handleUpdate = () => {
       setNewsArticles(getNewsList())
