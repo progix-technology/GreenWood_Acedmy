@@ -35,18 +35,39 @@ const loginLimiter = rateLimit({
 });
 
 // Database Connection & Permanent Super Admin Auto-Seeder
-const MONGO_URI = process.env.MONGO_URI || 'mongodb+srv://progixtechnology_db_user:rH6296GOGVlexPah@cluster0.fbigv9q.mongodb.net/greenwood_school?retryWrites=true&w=majority&appName=Cluster0';
+const CLOUD_MONGO_URI = 'mongodb+srv://progixtechnology_db_user:rH6296GOGVlexPah@cluster0.fbigv9q.mongodb.net/greenwood_school?retryWrites=true&w=majority&appName=Cluster0';
 
-mongoose
-    .connect(MONGO_URI)
-    .then(async () => {
-        console.log('✅ MongoDB connected successfully to database');
+let MONGO_URI = process.env.MONGO_URI;
+if (!MONGO_URI || MONGO_URI.includes('127.0.0.1') || MONGO_URI.includes('localhost') || !MONGO_URI.startsWith('mongodb')) {
+    MONGO_URI = CLOUD_MONGO_URI;
+}
+
+const connectDB = async () => {
+    try {
+        await mongoose.connect(MONGO_URI, {
+            serverSelectionTimeoutMS: 10000,
+            socketTimeoutMS: 45000,
+        });
+        console.log('✅ MongoDB Atlas connected successfully to database');
         await seedSuperAdmin();
-    })
-    .catch((err) => {
+    } catch (err) {
         console.warn('⚠️ MongoDB Connection Notice:', err.message);
-        console.log('ℹ️ Operating with in-memory fallback active.');
+        console.log('ℹ️ Retrying MongoDB connection in 5 seconds...');
+        setTimeout(connectDB, 5000);
+    }
+};
+
+connectDB();
+
+// Health check endpoint to verify cloud database status
+app.get('/api/health', (req, res) => {
+    res.json({
+        status: 'ok',
+        dbState: mongoose.connection.readyState,
+        dbConnected: mongoose.connection.readyState === 1,
+        uptime: process.uptime()
     });
+});
 
 // Seed Fixed Permanent Super Admin Account if not present
 async function seedSuperAdmin() {
