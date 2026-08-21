@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Trophy, Award, Star, Sparkles, BookOpen, GraduationCap, Quote, CheckCircle2, ChevronRight, X } from 'lucide-react'
-import { getToppers } from '../../data/toppers'
+import { getToppers, syncToppersFromApi } from '../../data/toppers'
 import { getOptimizedImageUrl } from '../../utils/cloudinaryHelper'
 
 export default function HallOfFameSection() {
@@ -9,6 +9,13 @@ export default function HallOfFameSection() {
   const [selectedTopper, setSelectedTopper] = useState(null)
 
   useEffect(() => {
+    // Immediate API fetch from Render MongoDB
+    syncToppersFromApi().then((data) => {
+      if (data && Array.isArray(data) && data.length > 0) {
+        setToppersList(data)
+      }
+    })
+
     const handleUpdate = () => {
       setToppersList(getToppers())
     }

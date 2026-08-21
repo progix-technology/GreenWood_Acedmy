@@ -311,8 +311,14 @@ app.post('/api/admissions/send-email', express.json(), async (req, res) => {
 });
 
 // ==========================================
-// MONGODB SCHEMAS & CRUD ENDPOINTS FOR DYNAMIC DATA Persistence
+// IN-MEMORY BACKUP & MONGODB SCHEMAS FOR DYNAMIC DATA
 // ==========================================
+const memoryStore = {
+    toppers: [],
+    gallery: [],
+    news: [],
+    faculty: []
+};
 
 const topperSchema = new mongoose.Schema({
     id: String,
@@ -336,10 +342,16 @@ app.get('/api/toppers', async (req, res) => {
     try {
         if (mongoose.connection.readyState === 1) {
             const list = await Topper.find().sort({ createdAt: -1 });
-            if (list.length > 0) return res.json(list);
+            if (list && list.length > 0) return res.json(list);
+        }
+        if (memoryStore.toppers && memoryStore.toppers.length > 0) {
+            return res.json(memoryStore.toppers);
         }
         res.json([]);
     } catch (err) {
+        if (memoryStore.toppers && memoryStore.toppers.length > 0) {
+            return res.json(memoryStore.toppers);
+        }
         res.status(500).json({ error: err.message });
     }
 });
@@ -347,7 +359,13 @@ app.get('/api/toppers', async (req, res) => {
 // POST /api/toppers (Sync or Save Toppers)
 app.post('/api/toppers', async (req, res) => {
     try {
-        const toppers = req.body; // Array or Single object
+        const toppers = req.body;
+        if (Array.isArray(toppers)) {
+            memoryStore.toppers = toppers;
+        } else if (toppers) {
+            memoryStore.toppers = [toppers, ...memoryStore.toppers];
+        }
+
         if (mongoose.connection.readyState === 1) {
             if (Array.isArray(toppers)) {
                 await Topper.deleteMany({});
@@ -359,7 +377,7 @@ app.post('/api/toppers', async (req, res) => {
                 return res.json({ success: true, topper: newTopper });
             }
         }
-        res.json({ success: true, message: 'Saved in memory' });
+        res.json({ success: true, toppers: memoryStore.toppers });
     } catch (err) {
         console.error('Error saving toppers:', err.message);
         res.status(500).json({ error: err.message });
@@ -380,10 +398,16 @@ app.get('/api/gallery', async (req, res) => {
     try {
         if (mongoose.connection.readyState === 1) {
             const list = await Gallery.find().sort({ createdAt: -1 });
-            if (list.length > 0) return res.json(list);
+            if (list && list.length > 0) return res.json(list);
+        }
+        if (memoryStore.gallery && memoryStore.gallery.length > 0) {
+            return res.json(memoryStore.gallery);
         }
         res.json([]);
     } catch (err) {
+        if (memoryStore.gallery && memoryStore.gallery.length > 0) {
+            return res.json(memoryStore.gallery);
+        }
         res.status(500).json({ error: err.message });
     }
 });
@@ -391,6 +415,12 @@ app.get('/api/gallery', async (req, res) => {
 app.post('/api/gallery', async (req, res) => {
     try {
         const items = req.body;
+        if (Array.isArray(items)) {
+            memoryStore.gallery = items;
+        } else if (items) {
+            memoryStore.gallery = [items, ...memoryStore.gallery];
+        }
+
         if (mongoose.connection.readyState === 1) {
             if (Array.isArray(items)) {
                 await Gallery.deleteMany({});
@@ -401,7 +431,7 @@ app.post('/api/gallery', async (req, res) => {
                 return res.json({ success: true, item: newItem });
             }
         }
-        res.json({ success: true, message: 'Saved in memory' });
+        res.json({ success: true, items: memoryStore.gallery });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
@@ -427,10 +457,16 @@ app.get('/api/news', async (req, res) => {
     try {
         if (mongoose.connection.readyState === 1) {
             const list = await News.find().sort({ createdAt: -1 });
-            if (list.length > 0) return res.json(list);
+            if (list && list.length > 0) return res.json(list);
+        }
+        if (memoryStore.news && memoryStore.news.length > 0) {
+            return res.json(memoryStore.news);
         }
         res.json([]);
     } catch (err) {
+        if (memoryStore.news && memoryStore.news.length > 0) {
+            return res.json(memoryStore.news);
+        }
         res.status(500).json({ error: err.message });
     }
 });
@@ -438,6 +474,12 @@ app.get('/api/news', async (req, res) => {
 app.post('/api/news', async (req, res) => {
     try {
         const items = req.body;
+        if (Array.isArray(items)) {
+            memoryStore.news = items;
+        } else if (items) {
+            memoryStore.news = [items, ...memoryStore.news];
+        }
+
         if (mongoose.connection.readyState === 1) {
             if (Array.isArray(items)) {
                 await News.deleteMany({});
@@ -448,7 +490,7 @@ app.post('/api/news', async (req, res) => {
                 return res.json({ success: true, item: newItem });
             }
         }
-        res.json({ success: true, message: 'Saved in memory' });
+        res.json({ success: true, items: memoryStore.news });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
@@ -472,10 +514,16 @@ app.get('/api/faculty', async (req, res) => {
     try {
         if (mongoose.connection.readyState === 1) {
             const list = await Faculty.find().sort({ createdAt: -1 });
-            if (list.length > 0) return res.json(list);
+            if (list && list.length > 0) return res.json(list);
+        }
+        if (memoryStore.faculty && memoryStore.faculty.length > 0) {
+            return res.json(memoryStore.faculty);
         }
         res.json([]);
     } catch (err) {
+        if (memoryStore.faculty && memoryStore.faculty.length > 0) {
+            return res.json(memoryStore.faculty);
+        }
         res.status(500).json({ error: err.message });
     }
 });
@@ -483,6 +531,12 @@ app.get('/api/faculty', async (req, res) => {
 app.post('/api/faculty', async (req, res) => {
     try {
         const items = req.body;
+        if (Array.isArray(items)) {
+            memoryStore.faculty = items;
+        } else if (items) {
+            memoryStore.faculty = [items, ...memoryStore.faculty];
+        }
+
         if (mongoose.connection.readyState === 1) {
             if (Array.isArray(items)) {
                 await Faculty.deleteMany({});
@@ -493,7 +547,7 @@ app.post('/api/faculty', async (req, res) => {
                 return res.json({ success: true, item: newItem });
             }
         }
-        res.json({ success: true, message: 'Saved in memory' });
+        res.json({ success: true, items: memoryStore.faculty });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
