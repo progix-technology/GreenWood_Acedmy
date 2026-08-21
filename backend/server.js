@@ -364,11 +364,11 @@ const topperSchema = new mongoose.Schema({
 
 const Topper = mongoose.models.Topper || mongoose.model('Topper', topperSchema);
 
-// GET /api/toppers
+// GET /api/toppers (Sorted by ID 1..6)
 app.get('/api/toppers', async (req, res) => {
     try {
         if (mongoose.connection.readyState === 1) {
-            const list = await Topper.find().sort({ createdAt: -1 });
+            const list = await Topper.find().sort({ id: 1 });
             if (list && list.length > 0) return res.json(list);
         }
         if (memoryStore.toppers && memoryStore.toppers.length > 0) {
