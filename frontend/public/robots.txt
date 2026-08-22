@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /login
+
+Sitemap: https://greenwood-acedmy.vercel.app/sitemap.xml
