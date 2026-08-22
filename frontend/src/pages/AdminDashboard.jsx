@@ -258,9 +258,12 @@ export default function AdminDashboard() {
     }
 
     setToppersList(updated)
-    await saveToppers(updated)
+    const result = await saveToppers(updated)
     setIsSavingTopper(false)
     setTopperModalOpen(false)
+    if (result) {
+      alert('✅ Board Topper saved and synced live to Cloud Database successfully!')
+    }
   }
 
   const handleDeleteTopper = async (id) => {

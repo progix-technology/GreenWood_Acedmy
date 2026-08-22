@@ -396,12 +396,23 @@ app.post('/api/toppers', async (req, res) => {
 
         if (mongoose.connection.readyState === 1) {
             if (Array.isArray(toppers)) {
+                const cleanToppers = toppers.map((item) => {
+                    const obj = { ...item };
+                    delete obj._id;
+                    delete obj.__v;
+                    delete obj.createdAt;
+                    delete obj.updatedAt;
+                    return obj;
+                });
                 await Topper.deleteMany({});
-                const saved = await Topper.insertMany(toppers);
+                const saved = await Topper.insertMany(cleanToppers);
                 console.log(`✅ ${saved.length} Board Toppers synced to MongoDB Database`);
                 return res.json({ success: true, toppers: saved });
             } else {
-                const newTopper = await Topper.create(toppers);
+                const obj = { ...toppers };
+                delete obj._id;
+                delete obj.__v;
+                const newTopper = await Topper.create(obj);
                 return res.json({ success: true, topper: newTopper });
             }
         }
@@ -451,11 +462,22 @@ app.post('/api/gallery', async (req, res) => {
 
         if (mongoose.connection.readyState === 1) {
             if (Array.isArray(items)) {
+                const cleanItems = items.map((item) => {
+                    const obj = { ...item };
+                    delete obj._id;
+                    delete obj.__v;
+                    delete obj.createdAt;
+                    delete obj.updatedAt;
+                    return obj;
+                });
                 await Gallery.deleteMany({});
-                const saved = await Gallery.insertMany(items);
+                const saved = await Gallery.insertMany(cleanItems);
                 return res.json({ success: true, items: saved });
             } else {
-                const newItem = await Gallery.create(items);
+                const obj = { ...items };
+                delete obj._id;
+                delete obj.__v;
+                const newItem = await Gallery.create(obj);
                 return res.json({ success: true, item: newItem });
             }
         }
@@ -510,11 +532,22 @@ app.post('/api/news', async (req, res) => {
 
         if (mongoose.connection.readyState === 1) {
             if (Array.isArray(items)) {
+                const cleanItems = items.map((item) => {
+                    const obj = { ...item };
+                    delete obj._id;
+                    delete obj.__v;
+                    delete obj.createdAt;
+                    delete obj.updatedAt;
+                    return obj;
+                });
                 await News.deleteMany({});
-                const saved = await News.insertMany(items);
+                const saved = await News.insertMany(cleanItems);
                 return res.json({ success: true, items: saved });
             } else {
-                const newItem = await News.create(items);
+                const obj = { ...items };
+                delete obj._id;
+                delete obj.__v;
+                const newItem = await News.create(obj);
                 return res.json({ success: true, item: newItem });
             }
         }
@@ -567,11 +600,22 @@ app.post('/api/faculty', async (req, res) => {
 
         if (mongoose.connection.readyState === 1) {
             if (Array.isArray(items)) {
+                const cleanItems = items.map((item) => {
+                    const obj = { ...item };
+                    delete obj._id;
+                    delete obj.__v;
+                    delete obj.createdAt;
+                    delete obj.updatedAt;
+                    return obj;
+                });
                 await Faculty.deleteMany({});
-                const saved = await Faculty.insertMany(items);
+                const saved = await Faculty.insertMany(cleanItems);
                 return res.json({ success: true, items: saved });
             } else {
-                const newItem = await Faculty.create(items);
+                const obj = { ...items };
+                delete obj._id;
+                delete obj.__v;
+                const newItem = await Faculty.create(obj);
                 return res.json({ success: true, item: newItem });
             }
         }
