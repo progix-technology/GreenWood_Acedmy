@@ -44,103 +44,149 @@ export default function MagazinePage() {
       </section>
 
       {/* Main Magazine Showcase Hero Section */}
-      <section className="py-16 md:py-24 bg-gradient-to-b from-[var(--sand)]/30 to-white">
+      <section className="py-12 md:py-18 bg-gradient-to-b from-[var(--sand)]/30 to-white">
         <div className="container-wide">
-          <div className="bg-[#0F2044] text-white p-8 md:p-14 border border-[var(--gold)]/30 shadow-2xl relative overflow-hidden grid lg:grid-cols-12 gap-10 items-center">
-            {/* Background Ambient Glow */}
-            <div className="absolute top-0 right-0 w-96 h-96 bg-[var(--gold)]/10 rounded-full blur-3xl pointer-events-none" />
+          <div className="bg-[#0A182E] text-white p-6 sm:p-10 md:p-12 lg:p-14 rounded-2xl md:rounded-3xl border border-white/10 shadow-2xl relative overflow-hidden grid lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+            {/* Background Radial Glow */}
+            <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[var(--gold)]/10 rounded-full blur-3xl pointer-events-none" />
 
-            {/* Left Col: 3D Book Graphic Mockup */}
-            <div className="lg:col-span-5 flex justify-center">
+            {/* Left Col: Realistic 3D Hardcover Book Mockup */}
+            <div className="lg:col-span-5 flex justify-center py-4">
               <div
                 onClick={() => openReaderAt(1)}
-                className="group cursor-pointer relative w-64 sm:w-72 aspect-[1/1.414] bg-gradient-to-br from-[#122650] via-[#1a356d] to-[#0A1732] rounded-sm p-6 border-2 border-[var(--gold)] shadow-[0_20px_50px_rgba(0,0,0,0.6)] transform hover:-translate-y-2 hover:rotate-1 hover:shadow-[0_30px_60px_rgba(200,169,106,0.3)] transition-all duration-300 flex flex-col justify-between"
+                className="group cursor-pointer relative w-64 sm:w-72 aspect-[1/1.45] bg-[#0E2240] rounded-r-md p-6 border-l-8 border-[#071224] shadow-[0_20px_50px_rgba(0,0,0,0.8),-5px_0_15px_rgba(0,0,0,0.5)] transform hover:-translate-y-2.5 hover:rotate-1 hover:shadow-[0_30px_60px_rgba(221,161,60,0.25)] transition-all duration-300 flex flex-col justify-between select-none relative overflow-hidden"
               >
-                {/* Book Spine Shading */}
-                <div className="absolute left-0 top-0 bottom-0 w-4 bg-black/40 border-r border-white/10" />
+                {/* Book Spine Groove & Layer Lines */}
+                <div className="absolute left-2 top-0 bottom-0 w-0.5 bg-black/40 border-r border-white/10" />
+                <div className="absolute right-0 top-1 bottom-1 w-3 bg-gradient-to-l from-white/90 via-slate-200 to-slate-400 rounded-r-sm shadow-inner" />
 
-                {/* Cover Top */}
-                <div className="text-center pt-2">
-                  <div className="text-[9px] font-bold tracking-[0.25em] text-[var(--gold)] uppercase mb-1">
+                {/* Cover Outer Thin Gold Margin */}
+                <div className="absolute inset-2.5 border border-[#DDA13C]/35 pointer-events-none rounded-xs" />
+
+                {/* Cover Header */}
+                <div className="text-center pt-3 relative z-10">
+                  <div className="text-[9px] font-bold tracking-[0.28em] text-[#DDA13C] uppercase mb-1.5">
                     ANNUAL EDITION
                   </div>
-                  <div className="text-xl font-serif font-bold text-white tracking-wide leading-tight">
+                  <h3 className="text-xl sm:text-2xl font-serif font-bold text-white tracking-wide leading-tight">
                     THE GREENWOOD
-                  </div>
-                  <div className="text-base font-serif font-light text-[var(--gold)] tracking-widest">
+                  </h3>
+                  <div className="text-lg sm:text-xl font-serif font-bold text-[#DDA13C] tracking-wider">
                     CHRONICLE
                   </div>
-                  <div className="w-12 h-0.5 bg-[var(--gold)] mx-auto my-2" />
-                  <div className="text-[10px] text-slate-300 font-mono">
-                    2025–26 • VOL. XVIII
+                  <div className="flex items-center justify-center gap-2 my-2 text-[10px] text-slate-300 font-mono">
+                    <span>2024–25</span>
+                    <span className="text-[#DDA13C]">•</span>
+                    <span>VOL. 1</span>
                   </div>
                 </div>
 
-                {/* Center Badge */}
-                <div className="p-3 bg-white/5 border border-white/10 text-center">
-                  <div className="text-[11px] font-serif italic text-white/90">
+                {/* Cover Theme / Center */}
+                <div className="text-center my-auto py-2 relative z-10">
+                  <p className="text-[11px] font-serif italic text-slate-200 px-2">
                     "Nurturing Minds, Inspiring Futures"
-                  </div>
+                  </p>
                 </div>
 
-                {/* Bottom Trigger Prompt */}
-                <div className="text-center">
-                  <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[var(--gold)] text-[#0F2044] font-bold text-xs uppercase tracking-wider shadow-md group-hover:scale-105 transition-transform">
-                    <Eye size={14} />
-                    <span>Open 3D Flipbook</span>
+                {/* Architectural Building Vector Line Sketch */}
+                <div className="relative z-10 my-2 px-3 text-center flex flex-col items-center justify-center opacity-80 group-hover:opacity-100 transition-opacity">
+                  <svg
+                    viewBox="0 0 160 55"
+                    className="w-40 h-auto stroke-[#DDA13C] fill-none stroke-[1.2]"
+                  >
+                    {/* Central Portico & Pediment */}
+                    <polygon points="80,5 55,20 105,20" />
+                    <line x1="55" y1="20" x2="105" y2="20" />
+                    {/* Columns */}
+                    <line x1="60" y1="20" x2="60" y2="48" />
+                    <line x1="70" y1="20" x2="70" y2="48" />
+                    <line x1="90" y1="20" x2="90" y2="48" />
+                    <line x1="100" y1="20" x2="100" y2="48" />
+                    {/* Main Door */}
+                    <path d="M74,48 V32 Q80,26 86,32 V48" />
+                    {/* Left Wing */}
+                    <rect x="15" y="22" width="40" height="26" />
+                    <rect x="22" y="27" width="8" height="10" />
+                    <rect x="38" y="27" width="8" height="10" />
+                    {/* Right Wing */}
+                    <rect x="105" y="22" width="40" height="26" />
+                    <rect x="114" y="27" width="8" height="10" />
+                    <rect x="130" y="27" width="8" height="10" />
+                    {/* Base Steps */}
+                    <line x1="10" y1="48" x2="150" y2="48" />
+                    <line x1="5" y1="51" x2="155" y2="51" />
+                  </svg>
+                </div>
+
+                {/* Cover Bottom CTA Button */}
+                <div className="text-center pt-2 relative z-10">
+                  <div className="w-full py-2 bg-[#E5A93C] text-[#0A182E] rounded-md font-bold text-[11px] uppercase tracking-wider shadow-md flex items-center justify-center gap-2 group-hover:brightness-110 transition-all">
+                    <BookOpen size={14} />
+                    <span>OPEN 3D FLIPBOOK</span>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Right Col: Magazine Overview & Features */}
+            {/* Right Col: Magazine Information & Interactive Controls */}
             <div className="lg:col-span-7 space-y-6">
-              <div className="inline-flex items-center gap-2 px-3 py-1 bg-[var(--gold)]/20 border border-[var(--gold)] text-[var(--gold)] text-xs font-bold uppercase tracking-wider">
-                <Sparkles size={14} />
-                <span>Interactive E-Magazine Experience</span>
+              {/* Pill Tag */}
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-[#102444] border border-[#DDA13C]/70 rounded-md text-[#E5A93C] text-[11px] font-bold uppercase tracking-wider shadow-sm">
+                <Sparkles size={13} className="text-[#E5A93C]" />
+                <span>INTERACTIVE 3D MAGAZINE EXPERIENCE</span>
               </div>
 
-              <h2 className="text-3xl md:text-4xl font-serif font-bold text-white leading-tight">
+              {/* Headline */}
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-serif font-bold text-white leading-tight">
                 Step Inside the Living Heritage of Greenwood Academy
               </h2>
 
-              <p className="text-sm md:text-base text-slate-300 leading-relaxed font-normal">
-                {magazineData.theme} — Our annual magazine brings together student literary masterworks, CBSE distinction rankers, cutting-edge AI & Robotics prototypes, and the vibrant tapestry of performing arts.
+              {/* Description */}
+              <p className="text-xs sm:text-sm md:text-[15px] text-slate-300 leading-relaxed font-normal">
+                Nurturing Minds, Inspiring Futures — Our annual magazine brings together student literary masterpieces, CBSE distinction narratives, cutting-edge AI & Robotics prototypes, and the vibrant tapestry of performing arts.
               </p>
 
-              {/* Quick Info Grid */}
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 pt-2 border-t border-white/10">
-                <div className="p-3 bg-white/5 border border-white/10">
-                  <div className="text-[10px] text-slate-400 font-medium">Pages</div>
-                  <div className="text-lg font-serif font-bold text-white">10 Full Spreads</div>
+              {/* 3 Feature Boxes Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 pt-2">
+                {/* Box 1 */}
+                <div className="p-4 bg-[#0E2240]/80 border border-white/10 rounded-xl">
+                  <div className="text-[11px] text-slate-400 font-medium mb-1">Pages</div>
+                  <div className="text-xl sm:text-2xl font-bold text-white">100+</div>
+                  <div className="text-[11px] text-slate-400">Full Spreads</div>
                 </div>
-                <div className="p-3 bg-white/5 border border-white/10">
-                  <div className="text-[10px] text-slate-400 font-medium">Editor-in-Chief</div>
-                  <div className="text-xs font-serif font-bold text-[var(--gold)] truncate">Aarav Sharma (Head Boy)</div>
+
+                {/* Box 2 */}
+                <div className="p-4 bg-[#0E2240]/80 border border-white/10 rounded-xl">
+                  <div className="text-[11px] text-slate-400 font-medium mb-1">Exclusive Section</div>
+                  <div className="text-sm sm:text-base font-bold text-[#E5A93C]">Astra – Beyond</div>
+                  <div className="text-[11px] font-semibold text-[#E5A93C]">Third Eye</div>
                 </div>
-                <div className="p-3 bg-white/5 border border-white/10 col-span-2 sm:col-span-1">
-                  <div className="text-[10px] text-slate-400 font-medium">Format</div>
-                  <div className="text-xs font-bold text-emerald-400">3D Interactive Flipbook</div>
+
+                {/* Box 3 */}
+                <div className="p-4 bg-[#0E2240]/80 border border-white/10 rounded-xl">
+                  <div className="text-[11px] text-slate-400 font-medium mb-1">Format</div>
+                  <div className="text-sm sm:text-base font-bold text-[#2DD4BF]">3D Interactive</div>
+                  <div className="text-[11px] font-semibold text-[#2DD4BF]">Flipbook</div>
                 </div>
               </div>
 
               {/* Action Buttons */}
-              <div className="flex flex-wrap gap-4 pt-4">
+              <div className="flex flex-wrap items-center gap-3.5 pt-3">
                 <button
                   onClick={() => openReaderAt(1)}
-                  className="px-8 py-4 bg-[var(--gold)] hover:bg-[#b5954e] text-[#0F2044] font-bold text-xs uppercase tracking-wider transition-all duration-300 shadow-xl inline-flex items-center gap-2.5 group"
+                  className="px-7 py-3.5 bg-[#E5A93C] hover:bg-[#d6992d] text-[#0A182E] font-bold text-xs uppercase tracking-wider rounded-lg transition-all duration-200 shadow-lg hover:shadow-[0_10px_25px_rgba(229,169,60,0.35)] inline-flex items-center gap-2.5 group"
                 >
                   <BookOpen size={16} />
-                  <span>Launch 3D Magazine Reader</span>
-                  <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+                  <span>READ 3D MAGAZINE BOOK</span>
+                  <ArrowRight size={15} className="group-hover:translate-x-1 transition-transform" />
                 </button>
 
                 <button
-                  onClick={() => openReaderAt(1)}
-                  className="px-6 py-4 bg-transparent border border-white/30 hover:border-white text-white font-bold text-xs uppercase tracking-wider transition-colors inline-flex items-center gap-2"
+                  onClick={() => openReaderAt(2)}
+                  className="px-6 py-3.5 bg-[#0E2240]/80 border border-white/20 hover:border-white/50 text-white font-bold text-xs uppercase tracking-wider rounded-lg transition-colors inline-flex items-center gap-2"
                 >
                   <Layers size={16} />
-                  <span>Browse Table of Contents</span>
+                  <span>BROWSE TABLE OF CONTENTS</span>
                 </button>
               </div>
             </div>
