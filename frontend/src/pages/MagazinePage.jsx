@@ -130,12 +130,6 @@ export default function MagazinePage() {
 
             {/* Right Col: Magazine Information & Interactive Controls */}
             <div className="lg:col-span-7 space-y-6">
-              {/* Pill Tag */}
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-[#102444] border border-[#DDA13C]/70 rounded-md text-[#E5A93C] text-[11px] font-bold uppercase tracking-wider shadow-sm">
-                <Sparkles size={13} className="text-[#E5A93C]" />
-                <span>INTERACTIVE 3D MAGAZINE EXPERIENCE</span>
-              </div>
-
               {/* Headline */}
               <h2 className="text-2xl sm:text-3xl lg:text-4xl font-serif font-bold text-white leading-tight">
                 Step Inside the Living Heritage of Greenwood Academy
@@ -145,30 +139,6 @@ export default function MagazinePage() {
               <p className="text-xs sm:text-sm md:text-[15px] text-slate-300 leading-relaxed font-normal">
                 Nurturing Minds, Inspiring Futures — Our annual magazine brings together student literary masterpieces, CBSE distinction narratives, cutting-edge AI & Robotics prototypes, and the vibrant tapestry of performing arts.
               </p>
-
-              {/* 3 Feature Boxes Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 pt-2">
-                {/* Box 1 */}
-                <div className="p-4 bg-[#0E2240]/80 border border-white/10 rounded-xl">
-                  <div className="text-[11px] text-slate-400 font-medium mb-1">Pages</div>
-                  <div className="text-xl sm:text-2xl font-bold text-white">100+</div>
-                  <div className="text-[11px] text-slate-400">Full Spreads</div>
-                </div>
-
-                {/* Box 2 */}
-                <div className="p-4 bg-[#0E2240]/80 border border-white/10 rounded-xl">
-                  <div className="text-[11px] text-slate-400 font-medium mb-1">Exclusive Section</div>
-                  <div className="text-sm sm:text-base font-bold text-[#E5A93C]">Astra – Beyond</div>
-                  <div className="text-[11px] font-semibold text-[#E5A93C]">Third Eye</div>
-                </div>
-
-                {/* Box 3 */}
-                <div className="p-4 bg-[#0E2240]/80 border border-white/10 rounded-xl">
-                  <div className="text-[11px] text-slate-400 font-medium mb-1">Format</div>
-                  <div className="text-sm sm:text-base font-bold text-[#2DD4BF]">3D Interactive</div>
-                  <div className="text-[11px] font-semibold text-[#2DD4BF]">Flipbook</div>
-                </div>
-              </div>
 
               {/* Action Buttons */}
               <div className="flex flex-wrap items-center gap-3.5 pt-3">
