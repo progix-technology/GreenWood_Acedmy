@@ -122,11 +122,8 @@ export default function SchoolMagazineReader({ isOpen, onClose, initialPage = 1 
             className="h-10 w-auto object-contain shrink-0 rounded bg-white/5 p-1 border border-white/10"
           />
           <div>
-            <h2 className="text-sm md:text-base font-serif font-bold text-white tracking-wide flex items-center gap-2">
-              <span>{magazineData.title}</span>
-              <span className="hidden sm:inline-block px-2 py-0.5 text-[10px] font-sans font-semibold uppercase tracking-wider bg-[var(--gold)] text-[#0F2044] rounded-xs">
-                {magazineData.edition}
-              </span>
+            <h2 className="text-sm md:text-base font-serif font-bold text-white tracking-wide">
+              {magazineData.title}
             </h2>
             <p className="text-[11px] text-slate-400 font-normal hidden md:block">
               {magazineData.theme} • {magazineData.publishedDate}
