@@ -105,6 +105,9 @@ export default function Footer() {
             <Link className="footer-link hover:text-white transition-colors" to="/events">
               Events
             </Link>
+            <Link className="footer-link hover:text-white transition-colors" to="/magazine">
+              Digital Magazine (3D)
+            </Link>
             <Link className="footer-link hover:text-white transition-colors" to="/campus-life">
               Campus Life
             </Link>

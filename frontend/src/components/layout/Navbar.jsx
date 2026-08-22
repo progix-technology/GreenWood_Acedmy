@@ -61,6 +61,7 @@ export default function Navbar() {
         { label: 'Latest News', to: '/news' },
         { label: 'Events', to: '/events' },
         { label: 'Gallery', to: '/gallery' },
+        { label: 'Digital Magazine (3D)', to: '/magazine' },
       ],
     },
     {
