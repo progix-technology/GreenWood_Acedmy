@@ -91,7 +91,7 @@ function Hero() {
                   alt="Greenwood Academy School Building"
                   className="w-full h-auto object-cover"
                   loading="eager"
-                  fetchpriority="high"
+                  fetchPriority="high"
                   decoding="sync"
                 />
               </div>
