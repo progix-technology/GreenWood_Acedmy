@@ -7,17 +7,22 @@ export default function HallOfFameSection() {
   const [toppersList, setToppersList] = useState(getToppers)
   const [activeFilter, setActiveFilter] = useState('all')
   const [selectedTopper, setSelectedTopper] = useState(null)
+  const [isLoading, setIsLoading] = useState(getToppers().length === 0)
 
   useEffect(() => {
     // Immediate API fetch from Render MongoDB
     syncToppersFromApi().then((data) => {
-      if (data && Array.isArray(data) && data.length > 0) {
+      setIsLoading(false)
+      if (data && Array.isArray(data)) {
         setToppersList(data)
       }
+    }).catch(() => {
+      setIsLoading(false)
     })
 
     const handleUpdate = () => {
       setToppersList(getToppers())
+      setIsLoading(false)
     }
     window.addEventListener('toppersUpdated', handleUpdate)
     return () => window.removeEventListener('toppersUpdated', handleUpdate)
@@ -105,7 +110,25 @@ export default function HallOfFameSection() {
         </div>
 
         {/* Toppers Cards Grid */}
-        {filteredToppers.length === 0 ? (
+        {isLoading ? (
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="bg-white border border-gray-200 p-6 animate-pulse">
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="w-20 h-24 bg-gray-200" />
+                  <div className="flex-1 space-y-2">
+                    <div className="h-4 bg-gray-200 w-3/4" />
+                    <div className="h-6 bg-gray-200 w-1/2" />
+                  </div>
+                </div>
+                <div className="space-y-2 pt-4 border-t border-gray-100">
+                  <div className="h-3 bg-gray-200 w-full" />
+                  <div className="h-3 bg-gray-200 w-4/5" />
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : filteredToppers.length === 0 ? (
           <div className="bg-white border border-gray-200 p-12 text-center shadow-xs">
             <div className="w-16 h-16 bg-[var(--sand)] rounded-full flex items-center justify-center mx-auto mb-4 border border-[var(--gold)]/30">
               <Trophy size={28} className="text-[var(--gold)]" />

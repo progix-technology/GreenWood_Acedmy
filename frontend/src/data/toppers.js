@@ -58,8 +58,13 @@ export const saveToppers = async (toppers) => {
 export const syncToppersFromApi = async () => {
   try {
     const apiUrl = import.meta.env.VITE_API_URL || 'https://greenwood-acedmy.onrender.com/api'
-    const res = await fetch(`${apiUrl}/toppers`)
-    if (res.ok) {
+    let res = await fetch(`${apiUrl}/toppers`).catch(() => null)
+
+    if (!res || !res.ok) {
+      res = await fetch('https://greenwood-acedmy.onrender.com/api/toppers').catch(() => null)
+    }
+
+    if (res && res.ok) {
       const data = await res.json()
       if (Array.isArray(data)) {
         localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(data))
