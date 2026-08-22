@@ -48,6 +48,7 @@ export default function AdminDashboard() {
   useDocumentMeta({
     title: 'Admin Dashboard — Greenwood Academy',
     description: 'Management & Content Control Panel for Greenwood Academy Administrators.',
+    robots: 'noindex, nofollow',
   })
 
   const [activeTab, setActiveTab] = useState('overview')

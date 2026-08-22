@@ -3,8 +3,15 @@ import { useNavigate } from 'react-router-dom';
 import { Lock, Mail, Eye, EyeOff, ShieldCheck, ArrowRight } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { authApi } from '../api';
+import useDocumentMeta from '../utils/useDocumentMeta';
 
 export default function Login() {
+    useDocumentMeta({
+        title: 'Staff & Admin Login — Greenwood Academy',
+        description: 'Secure administrative access portal for Greenwood Academy faculty and administration.',
+        robots: 'noindex, nofollow',
+    });
+
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);

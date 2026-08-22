@@ -1,13 +1,22 @@
 import { useEffect } from 'react'
 
 /**
- * Custom Hook for Dynamic Page Title, Meta Description, OpenGraph, and Twitter Cards
+ * Comprehensive SEO Hook for Dynamic Page Title, Meta Description, Keywords, Robots, Canonical URL, OpenGraph, and Twitter Cards
  */
-export default function useDocumentMeta({ title, description, image, url }) {
+export default function useDocumentMeta({
+  title,
+  description,
+  keywords,
+  image,
+  url,
+  robots = 'index, follow',
+  type = 'website'
+} = {}) {
   useEffect(() => {
-    // 1. Update Title
+    // 1. Update Document Title
+    const siteTitle = 'Greenwood Academy'
     if (title) {
-      document.title = title.includes('Greenwood') ? title : `${title} — Greenwood Academy`
+      document.title = title.includes(siteTitle) ? title : `${title} | ${siteTitle}`
     }
 
     // Helper function to update or create meta tags
@@ -26,18 +35,42 @@ export default function useDocumentMeta({ title, description, image, url }) {
       element.setAttribute('content', value)
     }
 
-    // 2. Standard Meta Description
-    updateMetaTag('meta[name="description"]', 'description', description)
+    // 2. Standard Meta Description & Keywords
+    if (description) {
+      updateMetaTag('meta[name="description"]', 'description', description)
+    }
 
-    // 3. OpenGraph Meta Tags
-    updateMetaTag('meta[property="og:title"]', 'og:title', title, true)
-    updateMetaTag('meta[property="og:description"]', 'og:description', description, true)
-    if (image) updateMetaTag('meta[property="og:image"]', 'og:image', image, true)
-    if (url) updateMetaTag('meta[property="og:url"]', 'og:url', url, true)
+    const defaultKeywords = 'Greenwood Academy, CBSE School Lucknow, Best School Gomti Nagar, Admissions 2026-27, STEM School Lucknow, Top Schools in Uttar Pradesh'
+    updateMetaTag('meta[name="keywords"]', 'keywords', keywords || defaultKeywords)
+    updateMetaTag('meta[name="robots"]', 'robots', robots)
 
-    // 4. Twitter Cards
-    updateMetaTag('meta[name="twitter:title"]', 'twitter:title', title)
-    updateMetaTag('meta[name="twitter:description"]', 'twitter:description', description)
-    if (image) updateMetaTag('meta[name="twitter:image"]', 'twitter:image', image)
-  }, [title, description, image, url])
+    // 3. Dynamic Canonical URL
+    const currentUrl = url || window.location.href
+    let canonicalLink = document.querySelector('link[rel="canonical"]')
+    if (!canonicalLink) {
+      canonicalLink = document.createElement('link')
+      canonicalLink.setAttribute('rel', 'canonical')
+      document.head.appendChild(canonicalLink)
+    }
+    canonicalLink.setAttribute('href', currentUrl)
+
+    // 4. OpenGraph Meta Tags (Facebook, WhatsApp, LinkedIn)
+    const effectiveTitle = title ? (title.includes(siteTitle) ? title : `${title} | ${siteTitle}`) : 'Greenwood Academy — Nurturing Excellence Since 1998'
+    const effectiveDesc = description || 'CBSE Affiliated Senior Secondary School in Lucknow offering Nursery to Class 12 holistic education.'
+    const effectiveImage = image || 'https://greenwoodacademy.edu.in/og-image.jpg'
+
+    updateMetaTag('meta[property="og:site_name"]', 'og:site_name', siteTitle, true)
+    updateMetaTag('meta[property="og:type"]', 'og:type', type, true)
+    updateMetaTag('meta[property="og:url"]', 'og:url', currentUrl, true)
+    updateMetaTag('meta[property="og:title"]', 'og:title', effectiveTitle, true)
+    updateMetaTag('meta[property="og:description"]', 'og:description', effectiveDesc, true)
+    updateMetaTag('meta[property="og:image"]', 'og:image', effectiveImage, true)
+
+    // 5. Twitter Card Meta Tags
+    updateMetaTag('meta[name="twitter:card"]', 'twitter:card', 'summary_large_image')
+    updateMetaTag('meta[name="twitter:url"]', 'twitter:url', currentUrl)
+    updateMetaTag('meta[name="twitter:title"]', 'twitter:title', effectiveTitle)
+    updateMetaTag('meta[name="twitter:description"]', 'twitter:description', effectiveDesc)
+    updateMetaTag('meta[name="twitter:image"]', 'twitter:image', effectiveImage)
+  }, [title, description, keywords, image, url, robots, type])
 }
