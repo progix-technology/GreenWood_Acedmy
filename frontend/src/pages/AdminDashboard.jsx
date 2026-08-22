@@ -532,7 +532,8 @@ export default function AdminDashboard() {
     reader.onloadend = async () => {
       const base64Data = reader.result
       try {
-        const res = await fetch('http://localhost:5000/api/upload', {
+        const apiUrl = import.meta.env.VITE_API_URL || 'https://greenwood-acedmy.onrender.com/api'
+        const res = await fetch(`${apiUrl}/upload`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ image: base64Data }),
@@ -598,7 +599,8 @@ export default function AdminDashboard() {
         editingNewsItem.image.includes('cloudinary.com')
       ) {
         try {
-          await fetch('http://localhost:5000/api/upload/delete', {
+          const apiUrl = import.meta.env.VITE_API_URL || 'https://greenwood-acedmy.onrender.com/api'
+          await fetch(`${apiUrl}/upload/delete`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ imageUrl: editingNewsItem.image }),
@@ -636,7 +638,8 @@ export default function AdminDashboard() {
       const itemToDelete = newsList.find((n) => n.id === id)
       if (itemToDelete && itemToDelete.image && itemToDelete.image.includes('cloudinary.com')) {
         try {
-          await fetch('http://localhost:5000/api/upload/delete', {
+          const apiUrl = import.meta.env.VITE_API_URL || 'https://greenwood-acedmy.onrender.com/api'
+          await fetch(`${apiUrl}/upload/delete`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ imageUrl: itemToDelete.image }),
@@ -677,7 +680,8 @@ export default function AdminDashboard() {
     reader.onloadend = async () => {
       const base64Data = reader.result
       try {
-        const res = await fetch('http://localhost:5000/api/upload', {
+        const apiUrl = import.meta.env.VITE_API_URL || 'https://greenwood-acedmy.onrender.com/api'
+        const res = await fetch(`${apiUrl}/upload`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ image: base64Data }),
@@ -736,7 +740,8 @@ export default function AdminDashboard() {
         editingFacultyItem.image.includes('cloudinary.com')
       ) {
         try {
-          await fetch('http://localhost:5000/api/upload/delete', {
+          const apiUrl = import.meta.env.VITE_API_URL || 'https://greenwood-acedmy.onrender.com/api'
+          await fetch(`${apiUrl}/upload/delete`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ imageUrl: editingFacultyItem.image }),
@@ -772,7 +777,8 @@ export default function AdminDashboard() {
       const itemToDelete = facultyList.find((f) => f.id === id)
       if (itemToDelete && itemToDelete.image && itemToDelete.image.includes('cloudinary.com')) {
         try {
-          await fetch('http://localhost:5000/api/upload/delete', {
+          const apiUrl = import.meta.env.VITE_API_URL || 'https://greenwood-acedmy.onrender.com/api'
+          await fetch(`${apiUrl}/upload/delete`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ imageUrl: itemToDelete.image }),
@@ -1026,7 +1032,8 @@ export default function AdminDashboard() {
     e.preventDefault()
     setSendingEmail(true)
     try {
-      const res = await fetch('http://localhost:5000/api/admissions/send-email', {
+      const apiUrl = import.meta.env.VITE_API_URL || 'https://greenwood-acedmy.onrender.com/api'
+      const res = await fetch(`${apiUrl}/admissions/send-email`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(emailForm),
