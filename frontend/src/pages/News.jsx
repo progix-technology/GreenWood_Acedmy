@@ -1,20 +1,22 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { Search, Calendar, Clock, ArrowRight, Tag, Newspaper } from 'lucide-react'
+import { Search, Calendar, Clock, ArrowRight, Tag, Newspaper, BookOpen, Sparkles, Eye, Trophy } from 'lucide-react'
 import { getNewsList, syncNewsFromApi } from '../data/news'
 import { getOptimizedImageUrl } from '../utils/cloudinaryHelper'
 import useDocumentMeta from '../utils/useDocumentMeta'
 import SectionReveal from '../components/common/SectionReveal'
+import SchoolMagazineReader from '../components/magazine/SchoolMagazineReader'
 import creativeToolsSvg from '../assets/bg-images/SchoolArtWork.png'
 
 export default function News() {
   const [newsArticles, setNewsArticles] = useState(getNewsList)
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedCategory, setSelectedCategory] = useState('All')
+  const [isMagazineOpen, setIsMagazineOpen] = useState(false)
 
   useDocumentMeta({
-    title: 'News & Announcements — Greenwood Academy',
-    description: 'Latest news, achievements, academic updates, and announcements from Greenwood Academy.',
+    title: 'News, Events & Digital Magazine — Greenwood Academy',
+    description: 'Latest news, achievements, academic updates, and read the 3D Digital Annual Magazine of Greenwood Academy.',
   })
 
   useEffect(() => {
@@ -111,6 +113,51 @@ export default function News() {
               </div>
             </SectionReveal>
           )}
+
+          {/* Digital Annual Magazine Showcase Banner */}
+          <SectionReveal>
+            <div className="mb-16 bg-gradient-to-r from-[#0F2044] via-[#162f62] to-[#0A162F] text-white border border-[var(--gold)]/40 p-6 md:p-10 shadow-xl relative overflow-hidden flex flex-col lg:flex-row items-center justify-between gap-8">
+              <div className="absolute top-0 right-0 w-80 h-80 bg-[var(--gold)]/10 rounded-full blur-3xl pointer-events-none" />
+
+              <div className="space-y-3 max-w-2xl relative z-10">
+                <div className="inline-flex items-center gap-2 px-3 py-1 bg-[var(--gold)]/20 border border-[var(--gold)] text-[var(--gold)] text-[11px] font-bold uppercase tracking-wider">
+                  <Sparkles size={13} />
+                  <span>ANNUAL PUBLICATION 2025–26</span>
+                </div>
+                <h2 className="text-2xl md:text-3xl lg:text-4xl font-serif font-bold text-white leading-tight">
+                  The Greenwood Chronicle • Digital 3D Magazine
+                </h2>
+                <p className="text-xs md:text-sm text-slate-300 leading-relaxed font-normal">
+                  Experience our annual school magazine in an interactive 3D Flipbook! Featuring CBSE Toppers, STEM & Robotics inventions, original student poems, and TARANG 2026 gala memories.
+                </p>
+                <div className="flex flex-wrap items-center gap-4 pt-2 text-[11px] text-[var(--gold)] font-medium">
+                  <span>✨ 10 Full Illustrated Spreads</span>
+                  <span>•</span>
+                  <span>🏆 House Championship Leaderboard</span>
+                  <span>•</span>
+                  <span>🎨 Student Art & Poetry</span>
+                </div>
+              </div>
+
+              <div className="flex flex-col sm:flex-row lg:flex-col items-center gap-3 shrink-0 relative z-10 w-full sm:w-auto">
+                <button
+                  onClick={() => setIsMagazineOpen(true)}
+                  className="w-full sm:w-auto px-8 py-3.5 bg-[var(--gold)] hover:bg-[#b8974e] text-[#0F2044] font-bold text-xs uppercase tracking-wider shadow-lg hover:scale-105 transition-all inline-flex items-center justify-center gap-2 group"
+                >
+                  <BookOpen size={16} />
+                  <span>Launch 3D Flipbook</span>
+                  <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+                </button>
+                <Link
+                  to="/magazine"
+                  className="w-full sm:w-auto px-6 py-3 bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold text-xs uppercase tracking-wider text-center transition-colors inline-flex items-center justify-center gap-1.5"
+                >
+                  <Eye size={14} />
+                  <span>View Full Details</span>
+                </Link>
+              </div>
+            </div>
+          </SectionReveal>
 
           {/* Search & Category Filter Bar */}
           <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 mb-12 pb-8 border-b border-gray-200">
@@ -258,6 +305,13 @@ export default function News() {
           </div>
         </div>
       </section>
+
+      {/* 3D Magazine Reader Modal */}
+      <SchoolMagazineReader
+        isOpen={isMagazineOpen}
+        onClose={() => setIsMagazineOpen(false)}
+        initialPage={1}
+      />
     </div>
   )
 }

@@ -14,6 +14,7 @@ const Admissions = lazy(() => import('./pages/Admissions'))
 const Apply = lazy(() => import('./pages/admissions/Apply'))
 const News = lazy(() => import('./pages/News'))
 const NewsPost = lazy(() => import('./pages/NewsPost'))
+const MagazinePage = lazy(() => import('./pages/MagazinePage'))
 const Events = lazy(() => import('./pages/Events'))
 const EventPage = lazy(() => import('./pages/EventPage'))
 const Faculty = lazy(() => import('./pages/Faculty'))
@@ -52,6 +53,8 @@ function App() {
               <Route path="gallery" element={<Gallery />} />
               <Route path="news" element={<News />} />
               <Route path="news/:slug" element={<NewsPost />} />
+              <Route path="magazine" element={<MagazinePage />} />
+              <Route path="news/magazine" element={<MagazinePage />} />
               <Route path="events" element={<Events />} />
               <Route path="events/:slug" element={<EventPage />} />
               <Route path="contact" element={<Contact />} />
